@@ -1,0 +1,129 @@
+* {
+  box-sizing: border-box;
+  font-family: "Inter", "Segoe UI", Arial, sans-serif;
+}
+
+body {
+  margin: 0;
+  background: linear-gradient(135deg, #f4f6f9, #eef1f5);
+  color: #333;
+}
+
+/* Layout */
+.container {
+  max-width: 1100px;
+  margin: 40px auto;
+  padding: 20px;
+}
+
+/* Page titles */
+h2 {
+  margin-bottom: 20px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+/* Cards */
+.card {
+  background: #ffffff;
+  padding: 20px 24px;
+  margin-bottom: 24px;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08);
+}
+
+/* Section headers */
+.card h3 {
+  margin-top: 0;
+  margin-bottom: 14px;
+  color: #111827;
+  font-size: 18px;
+}
+
+/* Buttons */
+button {
+  padding: 10px 18px;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+button:hover {
+  background: linear-gradient(135deg, #1e40af, #1d4ed8);
+  transform: translateY(-1px);
+}
+
+/* Logout button */
+.logout {
+  float: right;
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+}
+
+.logout:hover {
+  background: linear-gradient(135deg, #b91c1c, #991b1b);
+}
+
+/* Inputs */
+input,
+textarea,
+select {
+  width: 100%;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font-size: 14px;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: #2563eb;
+}
+
+/* Checkbox group */
+.checkbox-group label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 8px 0;
+  font-size: 15px;
+}
+
+/* Lists */
+ul {
+  padding-left: 18px;
+}
+
+li {
+  margin-bottom: 6px;
+}
+
+/* Notices */
+.notice {
+  padding: 12px 14px;
+  background: #f8fafc;
+  border-left: 5px solid #2563eb;
+  border-radius: 6px;
+  margin-bottom: 12px;
+}
+
+.notice strong {
+  color: #1e3a8a;
+}
+
+/* Forms */
+form {
+  margin-top: 10px;
+}
