@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { API } from "../services/api";
+import { API } from "../services/api.js";
 
 export default function Login() {
   const [roll_no, setRoll] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const handleLogin = async () => {
+  const login = async () => {
     const res = await fetch(`${API}/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -23,28 +23,12 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex justify-center items-center">
-      <div className="card w-full max-w-md">
-        <h2 className="text-2xl font-semibold mb-6 text-center">Login</h2>
-
-        <div className="space-y-4">
-          <input
-            className="input"
-            placeholder="Roll Number"
-            onChange={e => setRoll(e.target.value)}
-          />
-
-          <input
-            className="input"
-            type="password"
-            placeholder="Password"
-            onChange={e => setPassword(e.target.value)}
-          />
-
-          <button onClick={handleLogin} className="btn-primary w-full">
-            Login
-          </button>
-        </div>
+    <div className="min-h-screen flex justify-center items-center bg-black">
+      <div className="bg-gray-800 p-6 rounded text-white w-80">
+        <h2 className="text-xl mb-4">Welcome Back</h2>
+        <input className="w-full mb-3 p-2" placeholder="Roll No" onChange={e => setRoll(e.target.value)} />
+        <input type="password" className="w-full mb-3 p-2" placeholder="Password" onChange={e => setPassword(e.target.value)} />
+        <button className="w-full bg-green-600 py-2" onClick={login}>Login</button>
       </div>
     </div>
   );
