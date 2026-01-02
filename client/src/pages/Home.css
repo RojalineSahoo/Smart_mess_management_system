@@ -284,3 +284,17 @@ body {
 html {
   scroll-behavior: smooth;
 }
+
+@media (max-width: 1024px) {
+  .navbar {
+    padding: 18px 40px;
+  }
+
+  .features {
+    padding: 70px 40px;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
