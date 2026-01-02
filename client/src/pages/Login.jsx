@@ -1,35 +1,55 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { API } from "../services/api.js";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import '../styles/login.css';
 
-export default function Login() {
-  const [roll_no, setRoll] = useState("");
-  const [password, setPassword] = useState("");
+const Login = () => {
+  const [rollNo, setRollNo] = useState('');
+  const { login } = useAuth();
   const navigate = useNavigate();
 
-  const login = async () => {
-    const res = await fetch(`${API}/auth/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ roll_no, password })
-    });
-
-    const data = await res.json();
-    if (res.ok) {
-      localStorage.setItem("user", JSON.stringify(data.user));
-      localStorage.setItem("token", data.token);
-      navigate("/dashboard");
+  const handleLogin = (e) => {
+    e.preventDefault();
+    // Logic: If roll number starts with 'admin', log in as admin
+    if (rollNo.toLowerCase().includes('admin')) {
+      login('admin');
+      navigate('/admin');
+    } else {
+      login('student');
+      navigate('/dashboard');
     }
   };
 
   return (
-    <div className="min-h-screen flex justify-center items-center bg-black">
-      <div className="bg-gray-800 p-6 rounded text-white w-80">
-        <h2 className="text-xl mb-4">Welcome Back</h2>
-        <input className="w-full mb-3 p-2" placeholder="Roll No" onChange={e => setRoll(e.target.value)} />
-        <input type="password" className="w-full mb-3 p-2" placeholder="Password" onChange={e => setPassword(e.target.value)} />
-        <button className="w-full bg-green-600 py-2" onClick={login}>Login</button>
+    <div className="login-container">
+      <div className="login-card">
+        <div className="login-header">
+          <h1>Welcome Back!</h1>
+          <p>Log in to your account to manage meals and view your schedule.</p>
+        </div>
+        <form onSubmit={handleLogin} className="login-form">
+          <div className="form-group">
+            <label>College Roll Number</label>
+            <input 
+              type="text" 
+              placeholder="e.g., 20210042" 
+              value={rollNo}
+              onChange={(e) => setRollNo(e.target.value)}
+              required 
+            />
+          </div>
+          <div className="form-group">
+            <label>Password</label>
+            <input type="password" placeholder="Enter your password" required />
+          </div>
+          <div className="forgot-pass">
+            <a href="#">Forgot Password?</a>
+          </div>
+          <button type="submit" className="login-btn">Login</button>
+        </form>
       </div>
     </div>
   );
-}
+};
+
+export default Login;

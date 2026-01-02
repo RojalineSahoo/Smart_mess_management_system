@@ -1,0 +1,72 @@
+.menu-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.menu-header {
+  margin-bottom: 2rem;
+}
+
+.menu-title {
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+}
+
+.menu-subtitle {
+  color: var(--text-muted);
+}
+
+/* The Grid System */
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 cards per row like your screenshot */
+  gap: 24px;
+}
+
+.meal-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 24px;
+}
+
+.card-header {
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 1rem;
+}
+
+.card-header h3 {
+  color: var(--text-white);
+  font-size: 1.2rem;
+}
+
+.card-header p {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.meal-section {
+  margin-bottom: 1.2rem;
+}
+
+.meal-section label {
+  display: block;
+  color: var(--accent-green);
+  font-weight: 600;
+  font-size: 0.85rem;
+  margin-bottom: 4px;
+}
+
+.meal-section p {
+  color: var(--text-white);
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+/* Responsive adjustment for small screens */
+@media (max-width: 900px) {
+  .menu-grid {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}

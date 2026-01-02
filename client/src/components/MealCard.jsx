@@ -1,17 +1,27 @@
-import { isLocked } from "../utils/timeLock";
+import React from 'react';
+import '../styles/menu.css';
 
-export default function MealCard({ mealTime, onSkip }) {
-  const locked = isLocked(mealTime);
-
+const MealCard = ({ day, date, breakfast, lunch, dinner }) => {
   return (
-    <button
-      disabled={locked}
-      onClick={onSkip}
-      className={`px-4 py-2 text-white ${
-        locked ? "bg-gray-400" : "bg-green-600"
-      }`}
-    >
-      {locked ? "Locked" : "Skip Meal"}
-    </button>
+    <div className="meal-card">
+      <div className="card-header">
+        <h3>{day}</h3>
+        <p>{date}</p>
+      </div>
+      <div className="meal-section">
+        <label>Breakfast</label>
+        <p>{breakfast}</p>
+      </div>
+      <div className="meal-section">
+        <label>Lunch</label>
+        <p>{lunch}</p>
+      </div>
+      <div className="meal-section">
+        <label>Dinner</label>
+        <p>{dinner}</p>
+      </div>
+    </div>
   );
-}
+};
+
+export default MealCard;

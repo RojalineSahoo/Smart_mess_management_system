@@ -1,18 +1,19 @@
-export default function NoticeBoard({ notices }) {
-  const isNew = (date) =>
-    // eslint-disable-next-line react-hooks/purity
-    (Date.now() - new Date(date)) / (1000 * 60 * 60) <= 24;
+import React from 'react';
 
+const NoticeBoard = ({ notices }) => {
   return (
-    <div>
-      {notices.map(n => (
-        <div key={n._id} className="border p-2">
-          <p>{n.content}</p>
-          {isNew(n.created_at) && (
-            <span className="text-red-500 text-sm">NEW</span>
-          )}
-        </div>
-      ))}
+    <div className="notice-container">
+      <h3 className="section-title">Smart Notice Board</h3>
+      <div className="notice-list">
+        {notices.map((notice, index) => (
+          <div key={index} className="notice-card">
+            <p className="notice-text">{notice.title}</p>
+            <span className="notice-date">{notice.date}</span>
+          </div>
+        ))}
+      </div>
     </div>
   );
-}
+};
+
+export default NoticeBoard;

@@ -1,0 +1,72 @@
+/* src/styles/global.css */
+
+:root {
+  /* Dark Theme Palette based on your screenshots */
+  --bg-primary: #0f1115;      /* Deep black for main background */
+  --bg-secondary: #1a1d23;    /* Lighter gray for cards/sidebar */
+  --accent-green: #22c55e;    /* The vibrant green for buttons and icons */
+  --border-color: #2d333b;    /* Subtle borders */
+  
+  /* Text Colors */
+  --text-main: #ffffff;
+  --text-muted: #94a3b8;      /* For dates and secondary info */
+
+  /* Spacing & Layout */
+  --sidebar-width: 260px;
+  --border-radius: 12px;
+  --transition: 0.3s ease;
+}
+
+/* Base Resets */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-main);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Common Layout Container */
+.dashboard-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.dashboard-main {
+  flex: 1;
+  margin-left: var(--sidebar-width);
+  padding: 2rem;
+}
+
+/* Reusable Button Style */
+.btn-primary {
+  background-color: var(--accent-green);
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.btn-primary:hover {
+  background-color: #16a34a;
+  transform: translateY(-1px);
+}
+
+/* Link Resets */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+ul {
+  list-style: none;
+}

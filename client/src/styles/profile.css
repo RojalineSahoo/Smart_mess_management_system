@@ -1,0 +1,96 @@
+.profile-content {
+  max-width: 1000px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 30px;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 15px;
+  margin-bottom: 20px;
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.detail-item label {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  display: block;
+}
+
+.detail-item p {
+  font-weight: 500;
+  margin-top: 5px;
+}
+
+.metrics-value {
+  font-size: 3rem;
+  color: var(--text-white);
+  margin: 10px 0;
+}
+
+.badge-green {
+  background-color: rgba(34, 197, 94, 0.2);
+  color: var(--accent-green);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+/* Custom Bar Chart CSS */
+.chart-container {
+  height: 300px;
+  display: flex;
+  align-items: flex-end;
+  padding-top: 50px;
+}
+
+.bar-chart {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-end;
+  height: 100%;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.bar-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 60px;
+}
+
+.bar {
+  width: 100%;
+  background-color: var(--accent-green);
+  border-radius: 6px 6px 0 0;
+  position: relative;
+  transition: opacity 0.3s;
+}
+
+.bar:hover {
+  opacity: 0.8;
+}
+
+.bar-label {
+  margin-top: 10px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}

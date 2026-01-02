@@ -1,24 +1,24 @@
-import { createContext, useState } from "react";
+// eslint-disable-next-line no-unused-vars
+import React, { createContext, useState, useContext, useEffect } from 'react';
 
-// eslint-disable-next-line react-refresh/only-export-components
-export const AuthContext = createContext();
+const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(
-    JSON.parse(localStorage.getItem("user"))
-  );
+  // Initialize user state from localStorage if it exists
+  const [user, setUser] = useState(() => {
+    const savedUser = localStorage.getItem('mess_user');
+    return savedUser ? JSON.parse(savedUser) : { role: null, isLoggedIn: false };
+  });
 
-  const login = (data) => {
-    localStorage.setItem("token", data.token);
-    localStorage.setItem("user", JSON.stringify(data.user));
-    setUser(data.user);
+  const login = (role) => {
+    const userData = { role, isLoggedIn: true };
+    setUser(userData);
+    localStorage.setItem('mess_user', JSON.stringify(userData)); // Save to "DB"
   };
 
   const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    setUser(null);
-    window.location.href = "/";
+    setUser({ role: null, isLoggedIn: false });
+    localStorage.removeItem('mess_user'); // Clear from "DB"
   };
 
   return (
@@ -26,4 +26,13 @@ export const AuthProvider = ({ children }) => {
       {children}
     </AuthContext.Provider>
   );
+};
+
+// eslint-disable-next-line react-refresh/only-export-components
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
 };
