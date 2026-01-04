@@ -11,6 +11,7 @@ const Dashboard = () => {
       <main className="dashboard-main">
         <Navbar pageTitle="Student Dashboard" />
         
+        <main className="main-content">
         <div className="dashboard-content">
           <NoticeBoard notices={MOCK_DATA.notices} />
 
@@ -40,6 +41,7 @@ const Dashboard = () => {
              </div>
           </section>
         </div>
+        </main>
       </main>
     </div>
   );

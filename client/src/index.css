@@ -2,11 +2,26 @@
   box-sizing: border-box;
   font-family: "Inter", "Segoe UI", Arial, sans-serif;
 }
+/* index.css or App.css */
+:root {
+  color-scheme: dark; /* Tells the browser to use dark system defaults */
+}
 
+/* Ensure headings are bright white */
+h1, h2, h3, h4 {
+  color: #ffffff;
+}
+
+/* Ensure secondary text (like dates/descriptions) is slightly dimmed gray */
+p, span {
+  color: #9ca3af; 
+}
 body {
+  background-color: #0b0f17; /* Your deep dark background */
+  color: #f8fafc;           /* Off-white text for better readability */
   margin: 0;
-  background: linear-gradient(135deg, #f4f6f9, #eef1f5);
-  color: #333;
+  font-family: 'Inter', sans-serif; /* Modern clean font */
+  -webkit-font-smoothing: antialiased;
 }
 
 /* Layout */

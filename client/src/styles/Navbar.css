@@ -1,0 +1,131 @@
+/* Container styling */
+.top-navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: #111827; /* Dark Slate Gray (Screenshot 4) */
+  border-bottom: 1px solid #374151;
+  color: #ffffff;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+/* Page Title */
+.top-navbar h1 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+
+/* Right side actions wrapper */
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem; /* The margin/gap you asked for earlier */
+}
+
+/* Profile Image & Status Dot */
+.user-profile {
+  position: relative;
+  display: flex;
+  cursor: pointer;
+}
+
+.user-profile img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid #10b981; /* Green border around user profile */
+  object-fit: cover;
+}
+
+.status-dot {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 12px;
+  height: 12px;
+  background-color: #10b981; /* Emerald Green */
+  border: 2px solid #111827; /* Matches the navbar bg to look like a cutout */
+  border-radius: 50%;
+}
+
+/* Bell Icon Button */
+.icon-btn {
+  background: transparent;
+  border: none;
+  color: #9ca3af; /* Light Gray */
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+}
+
+.icon-btn:hover {
+  background-color: #1f2937;
+  color: #10b981; /* Turns green on hover */
+}
+
+/* Logout Button */
+.logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #10b981; /* Green Button */
+  color: #ffffff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.logout-btn:hover {
+  background-color: #059669; /* Darker green on hover */
+}
+
+.top-navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: #111827; /* Dark background */
+  border-bottom: 1px solid #374151;
+}
+
+.logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #2563eb; /* Blue color from screenshot */
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.logout-btn:hover {
+  background-color: #1d4ed8;
+}
+
+.user-profile {
+  position: relative;
+  width: 40px;
+  height: 40px;
+}
+
+.user-profile img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}

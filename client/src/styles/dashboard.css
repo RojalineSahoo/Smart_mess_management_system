@@ -102,3 +102,10 @@
   font-size: 0.85rem;
   margin-bottom: 20px;
 }
+
+.main-content {
+  padding: 2rem; /* Adds space inside the container */
+  margin-top: 1rem; /* Adds space specifically between Navbar and Content */
+  min-height: calc(100vh - 80px); /* Adjust 80px to your navbar height */
+  background-color: #0b0f17; /* Matches the dark theme */
+}

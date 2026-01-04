@@ -1,24 +1,24 @@
-// eslint-disable-next-line no-unused-vars
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useState, useContext } from 'react';
 
+// 1. Create the Context
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  // Initialize user state from localStorage if it exists
   const [user, setUser] = useState(() => {
-    const savedUser = localStorage.getItem('mess_user');
+    // We use 'user' as the key to match your ProtectedRoute
+    const savedUser = localStorage.getItem('user');
     return savedUser ? JSON.parse(savedUser) : { role: null, isLoggedIn: false };
   });
 
   const login = (role) => {
     const userData = { role, isLoggedIn: true };
     setUser(userData);
-    localStorage.setItem('mess_user', JSON.stringify(userData)); // Save to "DB"
+    localStorage.setItem('user', JSON.stringify(userData));
   };
 
   const logout = () => {
     setUser({ role: null, isLoggedIn: false });
-    localStorage.removeItem('mess_user'); // Clear from "DB"
+    localStorage.removeItem('user');
   };
 
   return (
@@ -28,7 +28,8 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-// eslint-disable-next-line react-refresh/only-export-components
+// 2. THIS IS THE LINE YOU ARE LIKELY MISSING
+// It must be named exactly 'useAuth'
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {

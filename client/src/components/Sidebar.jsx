@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Utensils, User, Settings, LogOut, ShieldCheck } from 'lucide-react';
+import { LayoutDashboard, Utensils, User, Settings, ShieldCheck } from 'lucide-react';
 import '../styles/sidebar.css';
 
 const Sidebar = ({ role }) => {
@@ -28,17 +28,24 @@ const Sidebar = ({ role }) => {
           </>
         ) : (
           <>
-            <NavLink to="/admin" className="nav-link"><LayoutDashboard size={20} /> Dashboard</NavLink>
-            <NavLink to="/admin/menu" className="nav-link"><Utensils size={20} /> Menu Management</NavLink>
-            <NavLink to="/admin/users" className="nav-link"><ShieldCheck size={20} /> User Management</NavLink>
+            <NavLink to="/admin" end className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>
+              <LayoutDashboard size={20} /> Admin Dashboard
+            </NavLink>
+            <NavLink to="/admin/menu" className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>
+              <Utensils size={20} /> Menu Management
+            </NavLink>
+            <NavLink to="/admin/users" className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>
+              <ShieldCheck size={20} /> User Management
+            </NavLink>
           </>
         )}
       </nav>
 
       <div className="sidebar-footer">
-        <button className="nav-link settings-btn">
+        <NavLink to="/settings" className="nav-link">
           <Settings size={20} /> Settings
-        </button>
+        </NavLink>
+        {/* Logout button removed from here */}
       </div>
     </div>
   );
