@@ -1,79 +1,74 @@
-import React from "react";
-import Sidebar from "../components/Sidebar";    // Change ../../ to ../
-import Navbar from "../components/Navbar";      // Change ../../ to ../
-import { MOCK_DATA } from "../data/mockData";   // Change ../../ to ../
-import "../styles/profile.css";                 // Ensure this points to ../styles/
+import React from 'react';
+import Sidebar from "../components/Sidebar";
+import Navbar from "../components/Navbar";
+import "../styles/profile.css";
 
 const Profile = () => {
-  const { student } = MOCK_DATA;
+  const user = {
+    name: "Priya Sharma",
+    rollNo: "21BCE1002",
+    branch: "Computer Science Eng.",
+    year: "3rd Year",
+    room: "B-205",
+    mealsSkipped: 7,
+    preference: "Vegetarian"
+  };
 
   return (
     <div className="dashboard-layout">
       <Sidebar role="student" />
       <main className="dashboard-main">
         <Navbar pageTitle="Student Profile" />
-
+        
         <div className="profile-content">
           {/* Personal Details Section */}
-          <section className="profile-section card">
+          <section className="profile-card">
             <div className="section-header">
-              <h3>Personal Details</h3>
-              <button className="edit-icon-btn">✎</button>
+              <h3 className="section-title">Personal Details</h3>
+              <button className="profile-edit-btn">✎ Edit</button>
             </div>
+            
             <div className="details-grid">
               <div className="detail-item">
-                <label>Name:</label>
-                <p>{student.name}</p>
+                <span className="label">Name</span>
+                <p className="value">{user.name}</p>
               </div>
               <div className="detail-item">
-                <label>Roll Number:</label>
-                <p>{student.rollNo}</p>
+                <span className="label">Roll Number</span>
+                <p className="value">{user.rollNo}</p>
               </div>
               <div className="detail-item">
-                <label>Branch:</label>
-                <p>{student.branch}</p>
+                <span className="label">Branch</span>
+                <p className="value">{user.branch}</p>
               </div>
               <div className="detail-item">
-                <label>Year:</label>
-                <p>{student.year}</p>
+                <span className="label">Year</span>
+                <p className="value">{user.year}</p>
               </div>
               <div className="detail-item">
-                <label>Room Number:</label>
-                <p>{student.room}</p>
+                <span className="label">Room Number</span>
+                <p className="value">{user.room}</p>
               </div>
             </div>
           </section>
 
           {/* Accountability Metrics Section */}
-          <section className="profile-section">
-            <h3 className="sub-title">Accountability Metrics</h3>
-            <div className="metrics-box card">
-              <label>Total Meals Skipped:</label>
-              <h2 className="metrics-value">{student.mealsSkipped}</h2>
-              
-              <div className="preference-box">
-                <label>Current Dietary Preference:</label>
-                <span className="badge-green">{student.preference}</span>
-              </div>
+          <section className="profile-card">
+            <div className="section-header">
+              <h3 className="section-title">Accountability Metrics</h3>
             </div>
-          </section>
-
-          {/* Consumption Trend (The Bar Chart) */}
-          <section className="profile-section">
-            <h3 className="sub-title">Monthly Consumption Trend</h3>
-            <div className="chart-container card">
-              <div className="bar-chart">
-                {student.consumptionTrend.map((data, index) => (
-                  <div key={index} className="bar-wrapper">
-                    <div 
-                      className="bar" 
-                      style={{ height: `${data.value * 3}px` }}
-                    >
-                      <span className="tooltip">{data.value}</span>
-                    </div>
-                    <span className="bar-label">{data.month}</span>
-                  </div>
-                ))}
+            
+            <div className="metrics-grid">
+              <div className="metric-item">
+                <span className="label">Total Meals Skipped</span>
+                <h2 className="metrics-value">{user.mealsSkipped}</h2>
+              </div>
+              
+              <div className="metric-item">
+                <span className="label">Dietary Preference</span>
+                <div className="badge-container">
+                  <span className="badge-green">{user.preference}</span>
+                </div>
               </div>
             </div>
           </section>

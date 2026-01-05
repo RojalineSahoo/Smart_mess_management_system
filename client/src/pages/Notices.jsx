@@ -1,23 +1,40 @@
-import React from 'react';
-import Sidebar from '../components/Sidebar';
-import Navbar from '../components/Navbar';
-import NoticeBoard from '../components/NoticeBoard';
-import '../styles/global.css'; // or notices.css if you created one
+import React, { useState } from 'react';
+import "../styles/notices.css";
 
-const Notices = () => {
+const Notices = ({ notices }) => {
+  const [hoveredId, setHoveredId] = useState(null);
+
   return (
-    <div className="dashboard-layout">
-      <Sidebar role="student" />
-      <main className="dashboard-main">
-        <Navbar pageTitle="Notices & Announcements" />
-        <div className="content-area">
-          {/* This component displays the list of notices */}
-          <NoticeBoard />
+    <div className="notice-section">
+      <h3 className="section-title">Smart Notice Board</h3>
+      <div className="notice-scroll-wrapper">
+        <div className="compact-notice-list">
+          {notices.map((notice) => (
+            <div 
+              key={notice.id} 
+              className={`slim-notice-card ${hoveredId === notice.id ? 'is-hovered' : ''}`}
+              onMouseEnter={() => setHoveredId(notice.id)}
+              onMouseLeave={() => setHoveredId(null)}
+            >
+              <div className="slim-header">
+                <div className="title-flex">
+                  <span className="dot"></span>
+                  <h4 className="notice-title-main">{notice.title}</h4>
+                </div>
+                <span className="notice-date-tag">{notice.date}</span>
+              </div>
+              
+              <div className="reveal-container">
+                <div className="inner-content">
+                  <p className="notice-text-content">{notice.content}</p>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
-      </main>
+      </div>
     </div>
   );
 };
 
-// THIS IS THE MISSING LINE:
 export default Notices;

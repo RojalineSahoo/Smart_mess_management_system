@@ -30,6 +30,7 @@ export const AuthProvider = ({ children }) => {
 
 // 2. THIS IS THE LINE YOU ARE LIKELY MISSING
 // It must be named exactly 'useAuth'
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
