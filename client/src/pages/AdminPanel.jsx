@@ -1,170 +1,133 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from 'react';
+import Sidebar from '../components/Sidebar';
+import Navbar from '../components/Navbar';
 import { db } from '../utils/storage';
-import Sidebar from "../components/Sidebar";
-import Navbar from "../components/Navbar";
-import "../styles/admin.css";
+import { Bell, Utensils, Users, Trash2, Save } from 'lucide-react';
+import '../styles/admin.css';
 
 const AdminPanel = () => {
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const [allNotices, setAllNotices] = useState(db.getNotices());
-  // eslint-disable-next-line no-unused-vars
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedDay, setSelectedDay] = useState("Monday");
-  const [weeklyEdit, setWeeklyEdit] = useState(db.getWeeklyMenu());
+  const [stats, setStats] = useState({ Breakfast: 0, Lunch: 0, Dinner: 0, totalUsers: 0 });
+  const [notices, setNotices] = useState([]);
+  const [menu, setMenu] = useState({});
+  const [newNotice, setNewNotice] = useState({ title: '', content: '' });
 
-  const handlePublishNotice = (e) => {
+  const tomorrowStr = new Date(new Date().setDate(new Date().getDate() + 1)).toLocaleDateString('en-CA');
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setStats(db.getMealCounts(tomorrowStr));
+    setNotices(db.getNotices());
+    setMenu(db.getWeeklyMenu());
+  }, [tomorrowStr]);
+
+  // Notice Logic
+  const handleAddNotice = (e) => {
     e.preventDefault();
-    if (!title || !content) return alert("Please fill all fields");
-    db.addNotice({ title, content });
-    setAllNotices(db.getNotices());
-    setTitle(""); setContent("");
-    alert("Notice Published!");
+    if (!newNotice.title) return;
+    setNotices(db.addNotice(newNotice));
+    setNewNotice({ title: '', content: '' });
   };
 
-  const handleDeleteNotice = (id) => {
-    if(window.confirm("Delete this notice?")) {
-      const updated = db.deleteNotice(id);
-      setAllNotices(updated);
-    }
+  // Menu Logic (Save all changes)
+  const handleMenuChange = (day, meal, value) => {
+    const updatedMenu = { ...menu, [day]: { ...menu[day], [meal]: value } };
+    setMenu(updatedMenu);
   };
 
-  const handleWeeklyUpdate = (e) => {
-    e.preventDefault();
-    db.updateWeeklyMenu(weeklyEdit);
-    alert(`Weekly Menu for ${selectedDay} updated!`);
-  };
-
-  const registeredStudents = [
-    { id: '21BCE1002', name: 'Priya Sharma', branch: 'CSE', status: 'Active' },
-    { id: '21BCE1005', name: 'Arjun Verma', branch: 'ECE', status: 'Active' },
-  ];
+  const saveMenu = () => {
+  try {
+    db.updateWeeklyMenu(menu);
+    // You could use a toast notification here instead of an alert
+    alert("Weekly Menu Updated Successfully!");
+  } catch (error) {
+    console.error("Failed to save menu:", error);
+    alert("Error saving menu. Please try again.");
+  }
+};;
 
   return (
     <div className="dashboard-layout">
       <Sidebar role="admin" />
       <main className="dashboard-main">
-        <Navbar pageTitle="Admin Control Center" />
-
-        <div className="admin-container">
-          {/* Top Row: Menu and Notice Management */}
-          <div className="admin-top-grid">
+        <Navbar pageTitle="Admin Control Panel" />
+        
+        <div className="main-content">
+          <div className="admin-container">
             
-            {/* Weekly Menu Card */}
-            <section className="admin-glass-card">
-              <div className="card-header">
-                <div className="header-info">
-                  <h3>Weekly Menu Editor</h3>
-                  <p>Update the recurring mess schedule</p>
-                </div>
-                <span className="day-indicator">{selectedDay}</span>
+            {/* 1. TOMORROW'S MEAL COUNTS (The Stats Cards) */}
+            <h3 className="section-title">Tomorrow's Live Tracking ({tomorrowStr})</h3>
+            <div className="menu-card-container">
+              <div className="visual-menu-card breakfast-theme">
+                <div className="menu-card-header"><h4>BREAKFAST</h4></div>
+                <div className="stat-value" style={{fontSize: '2.5rem', color: '#f59e0b'}}>{stats.Breakfast}</div>
+                <p style={{color: '#64748b', fontSize: '0.8rem'}}>Confirmed Students</p>
               </div>
+              <div className="visual-menu-card lunch-theme">
+                <div className="menu-card-header"><h4>LUNCH</h4></div>
+                <div className="stat-value" style={{fontSize: '2.5rem', color: '#10b981'}}>{stats.Lunch}</div>
+                <p style={{color: '#64748b', fontSize: '0.8rem'}}>Confirmed Students</p>
+              </div>
+              <div className="visual-menu-card dinner-theme">
+                <div className="menu-card-header"><h4>DINNER</h4></div>
+                <div className="stat-value" style={{fontSize: '2.5rem', color: '#ef4444'}}>{stats.Dinner}</div>
+                <p style={{color: '#64748b', fontSize: '0.8rem'}}>Confirmed Students</p>
+              </div>
+            </div>
+
+            <div className="admin-actions-grid" style={{ marginTop: '30px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
               
-              <div className="day-tabs">
-                {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day, idx) => {
-                  const fullDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-                  return (
-                    <button 
-                      key={day} 
-                      className={selectedDay === fullDays[idx] ? "tab-active" : ""}
-                      onClick={() => setSelectedDay(fullDays[idx])}
-                    >
-                      {day}
-                    </button>
-                  );
-                })}
-              </div>
-
-              <form className="admin-compact-form" onSubmit={handleWeeklyUpdate}>
-                <div className="input-row">
-                  <div className="input-group">
-                    <label>Breakfast</label>
-                    <input type="text" value={weeklyEdit[selectedDay]?.breakfast || ""} onChange={(e) => setWeeklyEdit({...weeklyEdit, [selectedDay]: { ...weeklyEdit[selectedDay], breakfast: e.target.value }})} />
-                  </div>
-                </div>
-                <div className="input-row">
-                  <div className="input-group">
-                    <label>Lunch</label>
-                    <input type="text" value={weeklyEdit[selectedDay]?.lunch || ""} onChange={(e) => setWeeklyEdit({...weeklyEdit, [selectedDay]: { ...weeklyEdit[selectedDay], lunch: e.target.value }})} />
-                  </div>
-                </div>
-                <div className="input-row">
-                  <div className="input-group">
-                    <label>Dinner</label>
-                    <input type="text" value={weeklyEdit[selectedDay]?.dinner || ""} onChange={(e) => setWeeklyEdit({...weeklyEdit, [selectedDay]: { ...weeklyEdit[selectedDay], dinner: e.target.value }})} />
-                  </div>
-                </div>
-                <button type="submit" className="save-btn">Update Schedule</button>
-              </form>
-            </section>
-
-            {/* Notice Board Card */}
-            <section className="admin-glass-card">
-              <div className="card-header">
-                <div className="header-info">
-                  <h3>Notice Board</h3>
-                  <p>Broadcast alerts to all students</p>
-                </div>
-              </div>
-
-              <form className="admin-compact-form" onSubmit={handlePublishNotice}>
-                <input className="dark-input" type="text" placeholder="Notice Title" value={title} onChange={(e) => setTitle(e.target.value)} />
-                <textarea className="dark-input" placeholder="Enter notice details..." value={content} onChange={(e) => setContent(e.target.value)} rows="3"></textarea>
-                <button type="submit" className="publish-btn">Publish Notice</button>
-              </form>
-
-              <div className="recent-notices">
-                <h4>Active Notices</h4>
-                <div className="notice-scroll-area">
-                  {allNotices.map(n => (
-                    <div key={n.id} className="mini-notice-item">
-                      <div className="n-meta">
-                        <span className="n-title">{n.title}</span>
-                        <span className="n-date">{n.date}</span>
-                      </div>
-                      <button onClick={() => handleDeleteNotice(n.id)} className="n-del-btn">✕</button>
+              {/* 2. NOTICE BOARD MANAGEMENT */}
+              <section className="admin-glass-card">
+                <h3><Bell size={20} /> Notice Management</h3>
+                <form onSubmit={handleAddNotice} style={{marginTop: '15px'}}>
+                  <input 
+                    className="admin-input"
+                    placeholder="Title"
+                    value={newNotice.title}
+                    onChange={(e) => setNewNotice({...newNotice, title: e.target.value})}
+                  />
+                  <textarea 
+                    className="admin-input"
+                    placeholder="Content"
+                    value={newNotice.content}
+                    onChange={(e) => setNewNotice({...newNotice, content: e.target.value})}
+                  />
+                  <button type="submit" className="save-btn" style={{width: '100%'}}>Post Notice</button>
+                </form>
+                <div className="admin-list" style={{marginTop: '15px'}}>
+                  {notices.map(n => (
+                    <div key={n.id} className="admin-item">
+                      <span>{n.title}</span>
+                      <Trash2 size={16} onClick={() => setNotices(db.deleteNotice(n.id))} color="#ef4444" cursor="pointer" />
                     </div>
                   ))}
                 </div>
-              </div>
-            </section>
-          </div>
+              </section>
 
-          {/* Bottom Row: User Management */}
-          <section className="admin-glass-card table-card">
-            <div className="table-header">
-              <h3>Student Management</h3>
-              <div className="search-box">
-                <input 
-                  type="text" 
-                  placeholder="Search by name or roll no..." 
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              </div>
+              {/* 3. QUICK MENU UPDATE (For Today/Tomorrow) */}
+              <section className="admin-glass-card">
+                <h3><Utensils size={20} /> Quick Menu Update</h3>
+                <p style={{fontSize: '0.8rem', color: '#64748b'}}>Update specific meals for the week:</p>
+                <div style={{marginTop: '15px', maxHeight: '300px', overflowY: 'auto'}}>
+                  {Object.keys(menu).map(day => (
+                    <div key={day} style={{marginBottom: '15px', borderBottom: '1px solid #334155', paddingBottom: '10px'}}>
+                      <h4 style={{color: '#3b82f6'}}>{day}</h4>
+                      <input 
+                        className="admin-mini-input"
+                        value={menu[day].lunch} 
+                        onChange={(e) => handleMenuChange(day, 'lunch', e.target.value)}
+                        placeholder="Lunch"
+                      />
+                    </div>
+                  ))}
+                </div>
+                <button onClick={saveMenu} className="save-btn" style={{width: '100%', marginTop: '10px'}}>
+                   <Save size={16} /> Save Weekly Menu
+                </button>
+              </section>
+
             </div>
-            <table className="modern-table">
-              <thead>
-                <tr>
-                  <th>Student Name</th>
-                  <th>Roll Number</th>
-                  <th>Branch</th>
-                  <th>Status</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {registeredStudents.map(s => (
-                  <tr key={s.id}>
-                    <td>{s.name}</td>
-                    <td><code className="roll-code">{s.id}</code></td>
-                    <td>{s.branch}</td>
-                    <td><span className="status-badge">Active</span></td>
-                    <td><button className="edit-link">Manage</button></td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </section>
+          </div>
         </div>
       </main>
     </div>

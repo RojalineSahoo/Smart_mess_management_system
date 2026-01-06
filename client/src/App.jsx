@@ -18,45 +18,48 @@ import './styles/global.css';
 function App() {
   const { user } = useAuth();
 
+  // Helper to check if user exists and has the correct role
+  const isStudent = user && user.role === 'student';
+  const isAdmin = user && user.role === 'admin';
+
   return (
     <Router>
       <Routes>
-        {/* 1. LANDING PAGE (Entry Point) 
-            We use path="/" so this shows up at http://localhost:5173/ */}
+        {/* 1. LANDING PAGE */}
         <Route path="/" element={<Home />} />
         
         {/* 2. AUTHENTICATION ROUTES */}
-        <Route path="/login" element={<Login />} />
+        {/* If already logged in, don't show login page, redirect to dashboard */}
+        <Route path="/login" element={
+          user ? (isAdmin ? <Navigate to="/admin" /> : <Navigate to="/dashboard" />) : <Login />
+        } />
         <Route path="/register" element={<Register />} />
 
-        {/* 3. PROTECTED STUDENT ROUTES 
-            These check if user.isLoggedIn is true. 
-            If not, they redirect to /login */}
+        {/* 3. PROTECTED STUDENT ROUTES */}
         <Route 
           path="/dashboard" 
-          element={user?.isLoggedIn && user?.role === 'student' ? <Dashboard /> : <Navigate to="/login" />} 
+          element={isStudent ? <Dashboard /> : <Navigate to="/login" />} 
         />
         <Route 
           path="/menu" 
-          element={user?.isLoggedIn && user?.role === 'student' ? <WeeklyMenu /> : <Navigate to="/login" />} 
+          element={isStudent ? <WeeklyMenu /> : <Navigate to="/login" />} 
         />
         <Route 
           path="/profile" 
-          element={user?.isLoggedIn && user?.role === 'student' ? <Profile /> : <Navigate to="/login" />} 
+          element={isStudent ? <Profile /> : <Navigate to="/login" />} 
         />
         <Route 
           path="/notices" 
-          element={user?.isLoggedIn && user?.role === 'student' ? <Notices /> : <Navigate to="/login" />} 
+          element={isStudent ? <Notices /> : <Navigate to="/login" />} 
         />
 
         {/* 4. PROTECTED ADMIN ROUTE */}
         <Route 
           path="/admin" 
-          element={user?.isLoggedIn && user?.role === 'admin' ? <AdminPanel /> : <Navigate to="/login" />} 
+          element={isAdmin ? <AdminPanel /> : <Navigate to="/login" />} 
         />
 
-        {/* 5. CATCH-ALL REDIRECT 
-            If a user enters a broken link, send them back to the Home page */}
+        {/* 5. CATCH-ALL REDIRECT */}
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Router>

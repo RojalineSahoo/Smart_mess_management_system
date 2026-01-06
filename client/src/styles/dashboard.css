@@ -123,3 +123,78 @@
 .breakfast-theme { border-top: 3px solid #f59e0b; }
 .lunch-theme { border-top: 3px solid #10b981; }
 .dinner-theme { border-top: 3px solid #ef4444; }
+
+/* Container for the Confirmation Buttons */
+.checkin-buttons {
+  display: flex;
+  gap: 15px;
+  margin-top: 15px;
+}
+
+/* Base style for the Confirm Button (Green) */
+.save-btn {
+  background: var(--emerald-main, #10b981);
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.save-btn:hover {
+  background: #059669;
+  transform: translateY(-2px);
+}
+
+/* Style for the Cancel/Disconfirm Button (Red/Orange) */
+.n-del-btn {
+  background: #ef4444 !important; /* Tailwind Red 500 */
+  color: white !important;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.n-del-btn:hover {
+  background: #dc2626 !important;
+  transform: translateY(-2px);
+}
+
+/* Make sure the glass card padding is consistent */
+.admin-glass-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 24px;
+}
+
+/* Styling for the Locked Status Badge */
+.locked-status {
+  margin-top: 15px;
+  font-size: 0.75rem;
+  color: #64748b;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 5px 10px;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+/* Ensure today's cards look slightly "disabled" or read-only */
+.meal-section:first-of-type .visual-menu-card {
+  opacity: 0.85;
+}
+
+/* Specific adjustments for buttons inside visual-menu-cards */
+.visual-menu-card .save-btn, 
+.visual-menu-card .n-del-btn {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}

@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import React, { createContext, useState, useContext } from 'react';
 
 // 1. Create the Context
@@ -5,19 +6,20 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
-    // We use 'user' as the key to match your ProtectedRoute
     const savedUser = localStorage.getItem('user');
-    return savedUser ? JSON.parse(savedUser) : { role: null, isLoggedIn: false };
+    // Default to null if no user is saved
+    return savedUser ? JSON.parse(savedUser) : null;
   });
 
-  const login = (role) => {
-    const userData = { role, isLoggedIn: true };
+  // UPDATED: Now accepts a full userData object
+  const login = (userData) => {
+    // userData will look like: { id: 'student_rahul', name: 'student_rahul', role: 'student' }
     setUser(userData);
     localStorage.setItem('user', JSON.stringify(userData));
   };
 
   const logout = () => {
-    setUser({ role: null, isLoggedIn: false });
+    setUser(null);
     localStorage.removeItem('user');
   };
 
@@ -28,9 +30,7 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-// 2. THIS IS THE LINE YOU ARE LIKELY MISSING
-// It must be named exactly 'useAuth'
-// eslint-disable-next-line react-refresh/only-export-components
+// 2. Custom Hook
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {

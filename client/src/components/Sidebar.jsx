@@ -1,14 +1,18 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { LayoutDashboard, Utensils, User, Settings, ShieldCheck } from 'lucide-react';
+import { useAuth } from '../context/AuthContext'; // Import hook
 import '../styles/sidebar.css';
 
-const Sidebar = ({ role }) => {
+const Sidebar = () => {
+  const { user } = useAuth(); // Get user directly from context
+  const role = user?.role || 'student'; // Fallback to student if not loaded
+
   return (
     <div className="sidebar">
       <div className="sidebar-brand">
         <div className="logo-box">
-          <Utensils color="#22c55e" size={24} />
+          <Utensils color="#10b981" size={24} /> {/* Updated to Emerald Green */}
         </div>
         <span>SmartMess</span>
       </div>
@@ -31,6 +35,7 @@ const Sidebar = ({ role }) => {
             <NavLink to="/admin" end className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>
               <LayoutDashboard size={20} /> Admin Dashboard
             </NavLink>
+            {/* These paths must match your App.js Routes exactly */}
             <NavLink to="/admin/menu" className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>
               <Utensils size={20} /> Menu Management
             </NavLink>
@@ -45,7 +50,6 @@ const Sidebar = ({ role }) => {
         <NavLink to="/settings" className="nav-link">
           <Settings size={20} /> Settings
         </NavLink>
-        {/* Logout button removed from here */}
       </div>
     </div>
   );
