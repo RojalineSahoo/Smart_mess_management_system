@@ -1,11 +1,47 @@
 import mongoose from "mongoose";
+import bcrypt from "bcryptjs";
 
 const userSchema = new mongoose.Schema({
-  roll_no: String,
-  password: String,
-  branch: String,
-  room_no: String,
-  role: { type: String, default: "student" }
+  roll_no: { 
+    type: String, 
+    required: true, 
+    unique: true, // Prevents duplicate registrations
+    trim: true 
+  },
+  password: { 
+    type: String, 
+    required: true 
+  },
+  branch: { 
+    type: String, 
+    required: true 
+  },
+  room_no: { 
+    type: String, 
+    required: true 
+  },
+  role: { 
+    type: String, 
+    enum: ["student", "admin", "manager"], // Restricts roles to these values
+    default: "student" 
+  },
+  wallet_balance: {
+    type: Number,
+    default: 0 // Necessary for the "Smart" payment logic
+  }
+}, { timestamps: true }); // Automatically adds 'createdAt' and 'updatedAt'
+
+// PRE-SAVE HOOK: Hashes the password before it hits your local MongoDB
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next();
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+  next();
 });
+
+// METHOD: Helps authController compare passwords during login
+userSchema.methods.comparePassword = async function (candidatePassword) {
+  return await bcrypt.compare(candidatePassword, this.password);
+};
 
 export default mongoose.model("User", userSchema);

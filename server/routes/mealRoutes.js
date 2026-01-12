@@ -1,6 +1,10 @@
 import express from "express";
-import { updateMeal } from "../controllers/mealController.js";
+import { applyForMeal } from "../controllers/mealController.js";
+import { protect } from "../middleware/authMiddleware.js";
+
 const router = express.Router();
 
-router.post("/update", updateMeal);
+// Student must be logged in to apply
+router.post("/apply", protect, applyForMeal);
+
 export default router;

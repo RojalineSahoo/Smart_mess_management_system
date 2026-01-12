@@ -1,10 +1,10 @@
 import express from "express";
-import { addMenu, addNotice } from "../controllers/adminController.js";
+import { getLiveCounts } from "../controllers/mealController.js";
 import { protect, adminOnly } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.post("/menu", protect, adminOnly, addMenu);
-router.post("/notice", protect, adminOnly, addNotice);
+// Only logged-in Admins can see live stats
+router.get("/live-stats", protect, adminOnly, getLiveCounts);
 
 export default router;
