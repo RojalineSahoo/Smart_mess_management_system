@@ -1,8 +1,21 @@
-import { Navigate } from "react-router-dom";
+import { Navigate } from 'react-router-dom';
+import { useContext } from 'react';
+import { AuthContext } from '../context/AuthContext';
 
-export default function ProtectedRoute({ children, role }) {
-  const user = JSON.parse(localStorage.getItem("user") || "null");
-  if (!user) return <Navigate to="/login" />;
-  if (role && user.role !== role) return <Navigate to="/dashboard" />;
+const ProtectedRoute = ({ children, allowedRoles }) => {
+  const { user, loading } = useContext(AuthContext);
+
+  if (loading) return <div>Loading Session...</div>;
+  
+  if (!user) {
+    return <Navigate to="/login" />;
+  }
+
+  if (allowedRoles && !allowedRoles.includes(user.role)) {
+    return <Navigate to="/dashboard" />; // Redirect students away from Admin pages
+  }
+
   return children;
-}
+};
+
+export default ProtectedRoute;

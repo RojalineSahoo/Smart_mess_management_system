@@ -1,24 +1,19 @@
 import React from 'react';
-import '../styles/menu.css';
 
-const MealCard = ({ day, date, breakfast, lunch, dinner }) => {
+const MealCard = ({ type, menuItem, onApply }) => {
+  // Determine theme based on meal type
+  const themeClass = type.toLowerCase() + "-theme";
+
   return (
-    <div className="meal-card">
-      <div className="card-header">
-        <h3>{day}</h3>
-        <p>{date}</p>
+    <div className={`visual-menu-card ${themeClass}`}>
+      <div className="menu-card-header">
+        <h4>{type.toUpperCase()}</h4>
       </div>
-      <div className="meal-section">
-        <label>Breakfast</label>
-        <p>{breakfast}</p>
-      </div>
-      <div className="meal-section">
-        <label>Lunch</label>
-        <p>{lunch}</p>
-      </div>
-      <div className="meal-section">
-        <label>Dinner</label>
-        <p>{dinner}</p>
+      <div className="menu-card-body">
+        <p className="menu-item-text">{menuItem}</p>
+        <button className="apply-btn" onClick={onApply}>
+          Apply for tomorrow
+        </button>
       </div>
     </div>
   );

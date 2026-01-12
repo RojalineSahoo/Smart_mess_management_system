@@ -1,113 +1,102 @@
-/* eslint-disable react-hooks/set-state-in-effect */
-import React, { useState, useEffect } from "react";
-import Sidebar from "../components/Sidebar";
-import Navbar from "../components/Navbar";
-import NoticeBoard from "../components/NoticeBoard";
-import { db } from '../utils/storage';
-import { useAuth } from "../context/AuthContext";
-import "../styles/dashboard.css";
+/* eslint-disable no-unused-vars */
+import React, { useState, useEffect } from 'react';
+import { useAuth } from '../context/AuthContext';
+import { API, applyMeal } from '../services/api';
+import { Bell, Clock, CheckCircle, AlertCircle } from 'lucide-react';
 
-const Dashboard = () => {
+const StudentDashboard = () => {
   const { user } = useAuth();
   const [notices, setNotices] = useState([]);
-  const [menus, setMenus] = useState({ today: {}, tomorrow: {} });
-  const [tomorrowAttendance, setTomorrowAttendance] = useState([]);
+  const [menu, setMenu] = useState({});
+  const [applying, setApplying] = useState(false);
 
-  const todayDateObj = new Date();
-  const tomorrowDateObj = new Date();
-  tomorrowDateObj.setDate(todayDateObj.getDate() + 1);
-
-  const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-  const tomorrowStr = tomorrowDateObj.toLocaleDateString('en-CA');
+  // Calculate Tomorrow's Date
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const dateStr = tomorrow.toISOString().split('T')[0];
 
   useEffect(() => {
-    setNotices(db.getNotices());
-    const fullWeeklyMenu = db.getWeeklyMenu();
-    
-    setMenus({
-      today: fullWeeklyMenu[days[todayDateObj.getDay()]] || {},
-      tomorrow: fullWeeklyMenu[days[tomorrowDateObj.getDay()]] || {}
-    });
-
-    const savedTomorrow = JSON.parse(localStorage.getItem(`attendance_${tomorrowStr}`)) || [];
-    setTomorrowAttendance(savedTomorrow);
+    const loadData = async () => {
+      try {
+        const [noticeRes, menuRes] = await Promise.all([
+          API.get('/notices'),
+          API.get('/admin/menu')
+        ]);
+        setNotices(noticeRes.data);
+        setMenu(menuRes.data);
+      } catch (err) {
+        console.error("Dashboard sync failed");
+      }
+    };
+    loadData();
   }, []);
 
-  const handleToggleTomorrow = (mealType) => {
-    const isConfirmed = tomorrowAttendance.find(a => a.id === user?.id && a.meal === mealType);
-    if (isConfirmed) {
-      const updated = db.removeAttendance(user.id, mealType, tomorrowStr);
-      setTomorrowAttendance(updated);
-    } else {
-      const updated = db.markAttendance(user.id, mealType, tomorrowStr);
-      setTomorrowAttendance(updated);
+  const handleApply = async (mealType) => {
+    setApplying(true);
+    try {
+      await applyMeal({ date: dateStr, mealType });
+      alert(`Applied for ${mealType}!`);
+    } catch (err) {
+      alert(err.response?.data?.message || "Time-lock active: Cannot apply now.");
+    } finally {
+      setApplying(false);
     }
   };
 
   return (
-    <div className="dashboard-layout">
-      <Sidebar role="student" />
-      <main className="dashboard-main">
-        <Navbar pageTitle="Meal Planning" />
-        
-        <div className="main-content">
-          <div className="dashboard-content">
-            {/* Notice Board */}
-            <NoticeBoard notices={notices} />
+    <div className="p-6 bg-slate-900 min-h-screen text-slate-100">
+      {/* Header */}
+      <div className="mb-8 flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold">Welcome, {user?.name}</h1>
+          <p className="text-slate-400">Manage your meals for {dateStr}</p>
+        </div>
+        <div className="bg-emerald-500/10 border border-emerald-500/20 px-4 py-2 rounded-lg text-emerald-400">
+          Wallet: ₹500.00
+        </div>
+      </div>
 
-            {/* SECTION: TODAY'S MENU (LOCKED) */}
-            <section className="meal-section">
-              <h3 className="section-title">Today's Menu (Locked)</h3>
-              <div className="menu-card-container">
-                <div className="visual-menu-card breakfast-theme">
-                  <div className="menu-card-header"><span className="menu-emoji">🍳</span><h4>Breakfast</h4></div>
-                  <p className="menu-details">{menus.today.breakfast}</p>
-                  <div className="locked-status">🔒 Locked</div>
-                </div>
-                <div className="visual-menu-card lunch-theme">
-                  <div className="menu-card-header"><span className="menu-emoji">🍛</span><h4>Lunch</h4></div>
-                  <p className="menu-details">{menus.today.lunch}</p>
-                  <div className="locked-status">🔒 Locked</div>
-                </div>
-                <div className="visual-menu-card dinner-theme">
-                  <div className="menu-card-header"><span className="menu-emoji">🍲</span><h4>Dinner</h4></div>
-                  <p className="menu-details">{menus.today.dinner}</p>
-                  <div className="locked-status">🔒 Locked</div>
-                </div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Notices Section */}
+        <div className="lg:col-span-2 space-y-6">
+          <h2 className="text-xl font-semibold flex items-center gap-2">
+            <Bell size={20} className="text-emerald-400" /> Announcements
+          </h2>
+          <div className="grid gap-4">
+            {notices.map(notice => (
+              <div key={notice._id} className="bg-slate-800/50 p-4 rounded-xl border border-slate-700 hover:border-emerald-500/50 transition-all">
+                <h3 className="font-bold text-emerald-400">{notice.title}</h3>
+                <p className="text-sm text-slate-300 mt-1">{notice.content}</p>
               </div>
-            </section>
-
-            {/* SECTION: TOMORROW'S PLAN (ACTIONABLE) */}
-            <section className="meal-section" style={{ marginTop: '30px' }}>
-              <h3 className="section-title">Tomorrow's Plan ({days[tomorrowDateObj.getDay()]})</h3>
-              <div className="menu-card-container">
-                {['Breakfast', 'Lunch', 'Dinner'].map((meal) => {
-                  const mealKey = meal.toLowerCase();
-                  const isConfirmed = tomorrowAttendance.find(a => a.id === user?.id && a.meal === meal);
-                  return (
-                    <div key={meal} className={`visual-menu-card ${mealKey}-theme`}>
-                      <div className="menu-card-header">
-                        <span className="menu-emoji">{meal === 'Breakfast' ? '🍳' : meal === 'Lunch' ? '🍛' : '🍲'}</span>
-                        <h4>{meal}</h4>
-                      </div>
-                      <p className="menu-details">{menus.tomorrow[mealKey]}</p>
-                      <button 
-                        onClick={() => handleToggleTomorrow(meal)}
-                        className={isConfirmed ? "n-del-btn" : "save-btn"}
-                        style={{ width: '100%', marginTop: '15px', borderRadius: '8px', padding: '10px' }}
-                      >
-                        {isConfirmed ? "Cancel Tomorrow" : "Confirm Tomorrow"}
-                      </button>
-                    </div>
-                  );
-                })}
-              </div>
-            </section>
+            ))}
           </div>
         </div>
-      </main>
+
+        {/* Meal Cards */}
+        <div className="space-y-6">
+          <h2 className="text-xl font-semibold flex items-center gap-2">
+            <Clock size={20} className="text-emerald-400" /> Apply for Tomorrow
+          </h2>
+          {['Breakfast', 'Lunch', 'Dinner'].map(meal => (
+            <div key={meal} className="bg-slate-800 p-5 rounded-2xl border border-slate-700 relative overflow-hidden">
+              <div className="flex justify-between items-center mb-4">
+                <span className="text-sm font-medium text-slate-400 uppercase tracking-widest">{meal}</span>
+                <CheckCircle size={18} className="text-emerald-500" />
+              </div>
+              <h4 className="text-lg font-bold mb-4">{menu[tomorrow.getDay()]?.[meal.toLowerCase()] || 'Special Menu'}</h4>
+              <button 
+                onClick={() => handleApply(meal)}
+                disabled={applying}
+                className="w-full py-2 bg-emerald-600 hover:bg-emerald-500 rounded-lg font-semibold transition-colors disabled:opacity-50"
+              >
+                Apply Now
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };
 
-export default Dashboard;
+export default StudentDashboard;
