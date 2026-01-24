@@ -1,10 +1,16 @@
 import express from "express";
-import { getLiveCounts } from "../controllers/mealController.js";
-import { protect, adminOnly } from "../middleware/authMiddleware.js";
+import authMiddleware from "../middleware/authMiddleware.js";
+import roleMiddleware from "../middleware/roleMiddleware.js";
+import { getTomorrowMealCount } from "../controllers/adminMealController.js";
 
 const router = express.Router();
 
-// Only logged-in Admins can see live stats
-router.get("/live-stats", protect, adminOnly, getLiveCounts);
+// Get tomorrow's meal count (admin only)
+router.get(
+  "/meals/tomorrow/count",
+  authMiddleware,
+  roleMiddleware("admin"),
+  getTomorrowMealCount
+);
 
 export default router;
