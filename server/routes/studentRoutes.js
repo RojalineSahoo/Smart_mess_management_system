@@ -6,6 +6,7 @@ import {
   cancelTomorrowMeal,
   getTomorrowMealStatus
 } from "../controllers/studentMealController.js";
+import { getMenuByDate } from "../controllers/menuController.js";
 
 const router = express.Router();
 
@@ -33,3 +34,12 @@ router.get(
   getTomorrowMealStatus
 );
 export default router;
+
+// View menu by date (student read-only)
+router.get(
+  "/menu",
+  authMiddleware,
+  roleMiddleware("student"),
+  getMenuByDate
+);
+
