@@ -3,7 +3,8 @@ import authMiddleware from "../middleware/authMiddleware.js";
 import roleMiddleware from "../middleware/roleMiddleware.js";
 import {
   applyTomorrowMeal,
-  cancelTomorrowMeal
+  cancelTomorrowMeal,
+  getTomorrowMealStatus
 } from "../controllers/studentMealController.js";
 
 const router = express.Router();
@@ -24,4 +25,11 @@ router.post(
   cancelTomorrowMeal
 );
 
+// Get tomorrow meal status (read-only)
+router.get(
+  "/meals/tomorrow/status",
+  authMiddleware,
+  roleMiddleware("student"),
+  getTomorrowMealStatus
+);
 export default router;

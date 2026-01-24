@@ -3,24 +3,6 @@ import MealEntry from "../models/MealEntry.js";
 // Student Meal Controller
 // Handles meal-related actions for students
 
-export const getTodayMealStatus = async (req, res, next) => {
-  try {
-    // logic will be added later
-    res.status(200).json({ message: "Today meal status endpoint" });
-  } catch (error) {
-    next(error);
-  }
-};
-
-export const getTomorrowMealStatus = async (req, res, next) => {
-  try {
-    // logic will be added later
-    res.status(200).json({ message: "Tomorrow meal status endpoint" });
-  } catch (error) {
-    next(error);
-  }
-};
-
 /*export const applyTomorrowMeal = async (req, res, next) => {
   try {
     // core apply logic will be added here
@@ -153,6 +135,41 @@ export const cancelTomorrowMeal = async (req, res, next) => {
 
     return res.status(200).json({
       message: "Meal cancelled for tomorrow",
+      status: entry.status
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getTomorrowMealStatus = async (req, res, next) => {
+  try {
+    const user = req.user;
+
+    // Role check
+    if (user.role !== "student") {
+      return res.status(403).json({ message: "Access denied" });
+    }
+
+    // Resolve tomorrow date
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0);
+
+    const entry = await MealEntry.findOne({
+      userId: user.id,
+      date: tomorrow
+    });
+
+    // No record
+    if (!entry) {
+      return res.status(200).json({
+        status: "NOT_APPLIED"
+      });
+    }
+
+    // Existing record
+    return res.status(200).json({
       status: entry.status
     });
   } catch (error) {
