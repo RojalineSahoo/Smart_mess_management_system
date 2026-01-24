@@ -177,3 +177,39 @@ export const getTomorrowMealStatus = async (req, res, next) => {
   }
 };
 
+export const getMonthlyMealSummary = async (req, res, next) => {
+  try {
+    const user = req.user;
+
+    if (user.role !== "student") {
+      return res.status(403).json({ message: "Access denied" });
+    }
+
+    const { month } = req.query; // format: YYYY-MM
+
+    if (!month) {
+      return res.status(400).json({ message: "Month is required" });
+    }
+
+    const [year, monthIndex] = month.split("-").map(Number);
+
+    const startDate = new Date(year, monthIndex - 1, 1);
+    const endDate = new Date(year, monthIndex, 0);
+
+    const meals = await MealEntry.find({
+      userId: user.id,
+      status: "APPLIED",
+      date: { $gte: startDate, $lte: endDate }
+    }).sort({ date: 1 });
+
+    return res.status(200).json({
+      month,
+      totalMeals: meals.length,
+      meals
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+

@@ -4,7 +4,8 @@ import roleMiddleware from "../middleware/roleMiddleware.js";
 import {
   applyTomorrowMeal,
   cancelTomorrowMeal,
-  getTomorrowMealStatus
+  getTomorrowMealStatus,
+  getMonthlyMealSummary
 } from "../controllers/studentMealController.js";
 import { getMenuByDate } from "../controllers/menuController.js";
 import { getActiveNotices } from "../controllers/noticeController.js";
@@ -50,6 +51,14 @@ router.get(
   authMiddleware,
   roleMiddleware("student"),
   getActiveNotices
+);
+
+// Get monthly meal summary (student read-only)
+router.get(
+  "/meals/summary",
+  authMiddleware,
+  roleMiddleware("student"),
+  getMonthlyMealSummary
 );
 
 
