@@ -3,6 +3,8 @@ import authMiddleware from "../middleware/authMiddleware.js";
 import roleMiddleware from "../middleware/roleMiddleware.js";
 import { getTomorrowMealCount } from "../controllers/adminMealController.js";
 import { uploadMenuForDate } from "../controllers/menuController.js";
+import { createNotice } from "../controllers/noticeController.js";
+
 
 const router = express.Router();
 
@@ -23,3 +25,14 @@ router.post(
   roleMiddleware("admin"),
   uploadMenuForDate
 );
+
+router.post(
+  "/notices",
+  authMiddleware,
+  roleMiddleware("admin"),
+  createNotice
+);
+
+
+
+

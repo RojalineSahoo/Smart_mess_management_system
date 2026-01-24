@@ -7,6 +7,7 @@ import {
   getTomorrowMealStatus
 } from "../controllers/studentMealController.js";
 import { getMenuByDate } from "../controllers/menuController.js";
+import { getActiveNotices } from "../controllers/noticeController.js";
 
 const router = express.Router();
 
@@ -42,4 +43,13 @@ router.get(
   roleMiddleware("student"),
   getMenuByDate
 );
+
+// Get active notices (student read-only)
+router.get(
+  "/notices",
+  authMiddleware,
+  roleMiddleware("student"),
+  getActiveNotices
+);
+
 

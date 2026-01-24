@@ -1,11 +1,50 @@
-import React from 'react'
+import Notice from "../models/Notice.js";
 
-const noticeController = () => {
-  return (
-    <div>
-      
-    </div>
-  )
-}
+export const createNotice = async (req, res, next) => {
+  try {
+    const user = req.user;
 
-export default noticeController
+    // Admin only
+    if (user.role !== "admin") {
+      return res.status(403).json({ message: "Access denied" });
+    }
+
+    const { title, description, priority, effectiveFrom } = req.body;
+
+    if (!title || !description || !effectiveFrom) {
+      return res.status(400).json({
+        message: "Title, description and effective date are required"
+      });
+    }
+
+    const notice = await Notice.create({
+      title,
+      description,
+      priority,
+      effectiveFrom: new Date(effectiveFrom),
+      createdBy: user.id
+    });
+
+    return res.status(201).json({
+      message: "Notice created successfully",
+      notice
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getActiveNotices = async (req, res, next) => {
+  try {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const notices = await Notice.find({
+      effectiveFrom: { $lte: today }
+    }).sort({ priority: -1, createdAt: -1 });
+
+    return res.status(200).json(notices);
+  } catch (error) {
+    next(error);
+  }
+};
