@@ -78,7 +78,8 @@ function StudentDashboard() {
     <div style={{ border: "1px solid #ccc", padding: "12px", marginBottom: "16px" }}>
       <h3>Tomorrow’s Meal Status</h3>
 
-      {tomorrowStatus?.status === "NOT_APPLIED" && (
+      {(tomorrowStatus?.status === "NOT_APPLIED" ||
+        tomorrowStatus?.status === "CANCELLED") && (
         <button onClick={handleApply}>Apply for Tomorrow</button>
       )}
 
