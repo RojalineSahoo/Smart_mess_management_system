@@ -5,10 +5,18 @@ import roleMiddleware from "../middleware/roleMiddleware.js";
 import { getTomorrowMealCount } from "../controllers/adminMealController.js";
 import { uploadMenuForDate } from "../controllers/menuController.js";
 import { createNotice } from "../controllers/noticeController.js";
+import { getTodayMealCount } from "../controllers/adminMealController.js";
 
 const router = express.Router();
 
 // Get tomorrow's meal count (admin only)
+router.get(
+  "/meals/today/count",
+  protect,
+  roleMiddleware("admin"),
+  getTodayMealCount
+);
+
 router.get(
   "/meals/tomorrow/count",
   protect,

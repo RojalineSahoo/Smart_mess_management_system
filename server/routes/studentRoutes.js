@@ -46,7 +46,7 @@ router.get(
   getMenuByDate
 );
 
-// Get active notices
+// Get notices
 router.get(
   "/notices",
   protect,
@@ -54,7 +54,7 @@ router.get(
   getActiveNotices
 );
 
-// Get monthly meal summary
+// Get monthly summary
 router.get(
   "/meals/summary",
   protect,

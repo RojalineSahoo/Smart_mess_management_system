@@ -38,3 +38,19 @@ export const getTomorrowMealCount = async (req, res, next) => {
     next(error);
   }
 };
+
+export const getTodayMealCount = async (req, res) => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const count = await MealEntry.countDocuments({
+    date: today,
+    status: "APPLIED"
+  });
+
+  res.json({
+    date: today.toISOString().split("T")[0],
+    count
+  });
+};
+
