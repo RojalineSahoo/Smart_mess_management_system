@@ -7,6 +7,7 @@ import StudentDashboard from "./pages/StudentDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import MonthlySummary from "./pages/MonthlySummary";
 import Notices from "./pages/Notices";
+import AdminNotices from "./pages/AdminNotices";
 
 import ProtectedRoute from "./routes/ProtectedRoute";
 
@@ -20,6 +21,15 @@ function App() {
         element={
           <ProtectedRoute>
             <StudentDashboard />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/admin/notices"
+        element={
+          <ProtectedRoute>
+            <AdminNotices />
           </ProtectedRoute>
         }
       />
