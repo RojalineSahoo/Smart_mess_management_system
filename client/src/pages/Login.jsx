@@ -9,21 +9,22 @@ function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
+  const { login, logout } = useAuth(); // 👈 get logout also
+  const navigate = useNavigate();
+
   useEffect(() => {
     setError(""); // clear error on page load
   }, []);
-
-  const { login } = useAuth();
-  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
     try {
-      const loggedInUser = await login({ email, password });
+      // 🔐 AUTO-LOGOUT previous user
+      logout(); // clears token + auth state
 
-      setError(""); // clear error on success
+      const loggedInUser = await login({ email, password });
 
       if (loggedInUser.role === "admin") {
         navigate("/admin/dashboard");
@@ -33,7 +34,7 @@ function Login() {
     } catch {
       setError("Invalid email or password");
     }
-  }; // ✅ THIS WAS MISSING
+  };
 
   return (
     <div style={{ padding: "2rem" }}>

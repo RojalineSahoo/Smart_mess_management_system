@@ -32,7 +32,16 @@ function Notices() {
         <p>No notices available.</p>
       ) : (
         notices.map((notice) => (
-          <div key={notice._id} style={{ marginBottom: "16px" }}>
+          <div
+            key={notice._id}
+            style={{
+              border: "1px solid #ddd",
+              padding: "12px",
+              marginBottom: "12px",
+              borderRadius: "6px"
+            }}
+          >
+
             <h4>
               {notice.priority === "HIGH" && "🔴 "}
               {notice.priority === "NORMAL" && "🟡 "}

@@ -71,46 +71,46 @@ function StudentDashboard() {
   if (loading) return <p>Loading student dashboard...</p>;
 
   return (
-    <div>
-      <h2>Student Dashboard</h2>
+  <div style={{ padding: "16px", maxWidth: "700px" }}>
+    <h2>Student Dashboard</h2>
 
-      {/* Tomorrow Meal Status */}
+    {/* Tomorrow Status */}
+    <div style={{ border: "1px solid #ccc", padding: "12px", marginBottom: "16px" }}>
       <h3>Tomorrow’s Meal Status</h3>
 
       {tomorrowStatus?.status === "NOT_APPLIED" && (
-        <button onClick={handleApply} disabled={actionLoading}>
-        {actionLoading ? "Applying..." : "Apply for Tomorrow"}
-        </button>
+        <button onClick={handleApply}>Apply for Tomorrow</button>
       )}
 
       {tomorrowStatus?.status === "APPLIED" && (
-        <button onClick={handleCancel} disabled={actionLoading}>
-        {actionLoading ? "Cancelling..." : "Cancel Tomorrow’s Meal"}</button>
+        <button onClick={handleCancel}>Cancel Tomorrow’s Meal</button>
       )}
 
-      <p>
-        <strong>Status:</strong>{" "}
-        {tomorrowStatus?.status === "APPLIED" && "🟢 Applied"}
-        {tomorrowStatus?.status === "CANCELLED" && "🔴 Cancelled"}
-        {tomorrowStatus?.status === "NOT_APPLIED" && "⚪ Not Applied"}
-      </p>
+      {tomorrowStatus?.status === "CANCELLED" && (
+        <p>Status: 🔴 Cancelled</p>
+      )}
 
+      {tomorrowStatus?.status === "APPLIED" && (
+        <p>Status: 🟢 Applied</p>
+      )}
+    </div>
 
-      {/* Today's Meal */}
+    {/* Today Menu */}
+    <div style={{ border: "1px solid #ccc", padding: "12px" }}>
       <h3>Today’s Meal</h3>
 
       {meal ? (
-        <div>
+        <>
           <p><strong>Breakfast:</strong> {meal.breakfast}</p>
           <p><strong>Lunch:</strong> {meal.lunch}</p>
           <p><strong>Dinner:</strong> {meal.dinner}</p>
-        </div>
+        </>
       ) : (
         <p>No meal data available</p>
       )}
-
     </div>
-  );
+  </div>
+);
 }
 
 export default StudentDashboard;

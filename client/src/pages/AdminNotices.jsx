@@ -33,17 +33,30 @@ function AdminNotices() {
   };
 
   return (
-    <div style={{ maxWidth: "500px" }}>
+  <div style={{ padding: "16px", maxWidth: "600px" }}>
       <h2>Create Notice</h2>
 
       {/* ✅ SUCCESS MESSAGE */}
       {successMessage && (
-        <p style={{ color: "green", fontWeight: "bold" }}>
+        <p
+          style={{
+            color: "green",
+            fontWeight: "bold",
+            marginBottom: "12px"
+          }}
+        >
           {successMessage}
         </p>
       )}
 
-      <form onSubmit={handleSubmit}>
+      <form
+        onSubmit={handleSubmit}
+        style={{
+          border: "1px solid #ccc",
+          padding: "16px",
+          borderRadius: "6px"
+        }}
+      >
         {/* Title */}
         <div>
           <label>Title</label>

@@ -8,7 +8,7 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
-  const [loading, setLoading] = useState(true); // ✅ NEW
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -19,10 +19,15 @@ export const AuthProvider = ({ children }) => {
       setToken(storedToken);
     }
 
-    setLoading(false); // ✅ done checking auth
+    setLoading(false);
   }, []);
 
   const login = async (credentials) => {
+    // 🔐 AUTO-LOGOUT previous user (IMPORTANT)
+    localStorage.clear();
+    setUser(null);
+    setToken(null);
+
     const res = await axios.post(
       "http://localhost:5000/api/auth/login",
       credentials
@@ -38,9 +43,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-
+    localStorage.clear();
     setUser(null);
     setToken(null);
   };

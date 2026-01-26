@@ -3,6 +3,8 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuth } from "./context/AuthContext";
 
 import Login from "./pages/Login";
+import Navbar from "./components/Navbar";
+
 import StudentDashboard from "./pages/StudentDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import MonthlySummary from "./pages/MonthlySummary";
@@ -13,7 +15,9 @@ import ProtectedRoute from "./routes/ProtectedRoute";
 
 function App() {
   return (
-    <Routes>
+    <>
+      <Navbar/>
+      <Routes>
       <Route path="/login" element={<Login />} />
 
       <Route
@@ -62,6 +66,7 @@ function App() {
 
       <Route path="*" element={<Navigate to="/login" />} />
     </Routes>
+    </>
   );
 }
 
