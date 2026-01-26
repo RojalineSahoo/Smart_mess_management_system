@@ -1,11 +1,10 @@
 import jwt from "jsonwebtoken";
 
-const authMiddleware = (req, res, next) => {
+export const protect = (req, res, next) => {
   const authHeader = req.headers.authorization;
 
-  // Check if Authorization header exists
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res.status(401).json({ message: "Not authenticated" });
+    return res.status(401).json({ message: "Not authorized, no token" });
   }
 
   const token = authHeader.split(" ")[1];
@@ -13,7 +12,6 @@ const authMiddleware = (req, res, next) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    // Attach user info to request
     req.user = {
       id: decoded.id,
       role: decoded.role
@@ -24,5 +22,3 @@ const authMiddleware = (req, res, next) => {
     return res.status(401).json({ message: "Invalid or expired token" });
   }
 };
-
-export default authMiddleware;

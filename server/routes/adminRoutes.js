@@ -1,38 +1,35 @@
 import express from "express";
-import authMiddleware from "../middleware/authMiddleware.js";
+import { protect } from "../middleware/authMiddleware.js";
 import roleMiddleware from "../middleware/roleMiddleware.js";
+
 import { getTomorrowMealCount } from "../controllers/adminMealController.js";
 import { uploadMenuForDate } from "../controllers/menuController.js";
 import { createNotice } from "../controllers/noticeController.js";
-
 
 const router = express.Router();
 
 // Get tomorrow's meal count (admin only)
 router.get(
   "/meals/tomorrow/count",
-  authMiddleware,
+  protect,
   roleMiddleware("admin"),
   getTomorrowMealCount
 );
 
-export default router;
-
 // Upload menu for a specific date (admin only)
 router.post(
   "/menu",
-  authMiddleware,
+  protect,
   roleMiddleware("admin"),
   uploadMenuForDate
 );
 
+// Create notice (admin only)
 router.post(
   "/notices",
-  authMiddleware,
+  protect,
   roleMiddleware("admin"),
   createNotice
 );
 
-
-
-
+export default router;

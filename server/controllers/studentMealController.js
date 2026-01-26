@@ -185,7 +185,7 @@ export const getMonthlyMealSummary = async (req, res, next) => {
       return res.status(403).json({ message: "Access denied" });
     }
 
-    const { month } = req.query; // format: YYYY-MM
+    const { month } = req.query; // YYYY-MM
 
     if (!month) {
       return res.status(400).json({ message: "Month is required" });
@@ -193,23 +193,31 @@ export const getMonthlyMealSummary = async (req, res, next) => {
 
     const [year, monthIndex] = month.split("-").map(Number);
 
-    const startDate = new Date(year, monthIndex - 1, 1);
-    const endDate = new Date(year, monthIndex, 0);
+    // ✅ Start of month (UTC normalized)
+    const startDate = new Date(Date.UTC(year, monthIndex - 1, 1, 0, 0, 0));
+
+    // ✅ Start of next month (exclusive)
+    const endDate = new Date(Date.UTC(year, monthIndex, 1, 0, 0, 0));
 
     const meals = await MealEntry.find({
       userId: user.id,
-      status: "APPLIED",
-      date: { $gte: startDate, $lte: endDate }
+      date: { $gte: startDate, $lt: endDate }
     }).sort({ date: 1 });
+
+    const applied = meals.filter(m => m.status === "APPLIED").length;
+    const cancelled = meals.filter(m => m.status === "CANCELLED").length;
 
     return res.status(200).json({
       month,
-      totalMeals: meals.length,
+      totalDays: meals.length,
+      applied,
+      cancelled,
       meals
     });
   } catch (error) {
     next(error);
   }
 };
+
 
 

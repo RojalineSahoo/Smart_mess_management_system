@@ -1,22 +1,17 @@
 import axios from "axios";
 
- export const API = axios.create({ baseURL: "http://localhost:5000/api" });
-
-// Automatically attach the JWT token to every request
-API.interceptors.request.use((req) => {
-  const token = localStorage.getItem("token");
-  if (token) {
-    req.headers.Authorization = `Bearer ${token}`;
-  }
-  return req;
+const api = axios.create({
+  baseURL: "http://localhost:5000/api"
 });
 
-// Authentication Calls
-export const login = (formData) => API.post("/auth/login", formData);
-export const register = (formData) => API.post("/auth/register", formData);
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
 
-// Meal Application Calls
-export const applyMeal = (mealData) => API.post("/meals/apply", mealData);
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
 
-// Admin Analytics
-export const getLiveStats = (date) => API.get(`/admin/live-stats?date=${date}`);
+  return config;
+});
+
+export default api;

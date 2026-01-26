@@ -1,40 +1,59 @@
-import React, { useState } from 'react';
-import "../styles/notices.css";
+import { useEffect, useState } from "react";
+import api from "../services/api";
 
-const Notices = ({ notices }) => {
-  const [hoveredId, setHoveredId] = useState(null);
+function Notices() {
+  const [notices, setNotices] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchNotices = async () => {
+      try {
+        const res = await api.get("/student/notices");
+        setNotices(res.data);
+      } catch (err) {
+        console.error("Failed to fetch notices", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchNotices();
+  }, []);
+
+  if (loading) {
+    return <p>Loading notices...</p>;
+  }
 
   return (
-    <div className="notice-section">
-      <h3 className="section-title">Smart Notice Board</h3>
-      <div className="notice-scroll-wrapper">
-        <div className="compact-notice-list">
-          {notices.map((notice) => (
-            <div 
-              key={notice.id} 
-              className={`slim-notice-card ${hoveredId === notice.id ? 'is-hovered' : ''}`}
-              onMouseEnter={() => setHoveredId(notice.id)}
-              onMouseLeave={() => setHoveredId(null)}
-            >
-              <div className="slim-header">
-                <div className="title-flex">
-                  <span className="dot"></span>
-                  <h4 className="notice-title-main">{notice.title}</h4>
-                </div>
-                <span className="notice-date-tag">{notice.date}</span>
-              </div>
-              
-              <div className="reveal-container">
-                <div className="inner-content">
-                  <p className="notice-text-content">{notice.content}</p>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+    <div>
+      <h2>Notices</h2>
+
+      {notices.length === 0 ? (
+        <p>No notices available.</p>
+      ) : (
+        notices.map((notice) => (
+          <div key={notice._id} style={{ marginBottom: "16px" }}>
+            <h4>
+              {notice.priority === "HIGH" && "🔴 "}
+              {notice.priority === "NORMAL" && "🟡 "}
+              {notice.priority === "LOW" && "🟢 "}
+              {notice.title}
+            </h4>
+
+            <p>{notice.description}</p>
+
+            <small>
+              Effective from:{" "}
+              {new Date(
+                notice.effectiveDate || notice.createdAt
+              ).toDateString()}
+            </small>
+
+          </div>
+        ))
+      )}
     </div>
   );
-};
+}
 
 export default Notices;
