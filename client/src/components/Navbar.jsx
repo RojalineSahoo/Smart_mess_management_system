@@ -5,7 +5,7 @@ function Navbar() {
   const { user, logout } = useAuth();
   const location = useLocation();
 
-  if (location.pathname === "/login") return null;
+  if (location.pathname === "/login" || location.pathname === "/" ) return null;
   if (!user) return null;
 
   return (
