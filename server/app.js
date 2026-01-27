@@ -10,9 +10,15 @@ const app = express();
 // 🔐 ENABLE CORS
 app.use(
   cors({
-    origin: "*",
+    origin: [
+      "http://localhost:5173",
+      "https://smart-mess-management-system-lovat.vercel.app",
+      "https://smart-mess-management-system-dm02hb30w-rojaline-sahoos-projects.vercel.app"
+    ],
+    credentials: true,
   })
 );
+
 
 app.use(express.json());
 

@@ -2,6 +2,7 @@ import { useState } from "react";
 import api from "../services/api";
 
 function AdminNotices() {
+  console.log("Admin Notices");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState("NORMAL");
