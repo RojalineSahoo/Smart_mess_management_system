@@ -3,115 +3,122 @@ import { useEffect, useState } from "react";
 import api from "../services/api";
 
 function StudentDashboard() {
-  const [meal, setMeal] = useState(null);
   const [tomorrowStatus, setTomorrowStatus] = useState(null);
+  const [summary, setSummary] = useState(null);
+  const [notices, setNotices] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [actionLoading, setActionLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  // ✅ Apply for tomorrow's meal
-  const handleApply = async () => {
-    try {
-      setActionLoading(true);
-      const res = await api.post("/student/meals/apply");
-      setTomorrowStatus({ status: res.data.status });
-      alert(res.data.message);
-    } catch (err) {
-      alert(err.response?.data?.msg || "Failed to apply");
-    } finally {
-      setActionLoading(false);
-    }
-  };
-
-
-  // ✅ Cancel tomorrow's meal
-  const handleCancel = async () => {
-    try {
-      setActionLoading(true);
-      const res = await api.post("/student/meals/cancel");
-      setTomorrowStatus({ status: res.data.status });
-      alert(res.data.message);
-    } catch (err) {
-      alert(err.response?.data?.msg || "Failed to cancel");
-    } finally {
-      setActionLoading(false);
-    }
-  };
-
-
-  // ✅ Fetch data on load
   useEffect(() => {
-    const fetchTodayMeal = async () => {
+    const fetchStudentData = async () => {
       try {
-        const today = new Date().toISOString().split("T")[0];
-        const res = await api.get(`/student/menu?date=${today}`);
+        // 🔹 Fetch tomorrow meal status
+        const statusRes = await api.get(
+          "/student/meals/tomorrow/status"
+        );
+        setTomorrowStatus(statusRes.data);
 
-        setMeal(res.data);
+        // 🔹 Fetch monthly summary (current month)
+        const now = new Date();
+        const month = `${now.getFullYear()}-${String(
+          now.getMonth() + 1
+        ).padStart(2, "0")}`;
+
+        const summaryRes = await api.get(
+          `/student/meals/summary?month=${month}`
+        );
+        setSummary(summaryRes.data);
+
+        // 🔹 Fetch active notices
+        const noticeRes = await api.get("/student/notices");
+        setNotices(noticeRes.data || []);
       } catch (err) {
-        console.error("Failed to fetch today's meal");
+        console.error("Failed to load student dashboard", err);
+        setError("Failed to load student dashboard");
+      } finally {
+        // 🔴 THIS IS THE MOST IMPORTANT LINE
+        setLoading(false);
       }
     };
 
-    const fetchTomorrowStatus = async () => {
-      try {
-        const res = await api.get("/student/meals/tomorrow/status");
-        setTomorrowStatus(res.data);
-      } catch (err) {
-        console.error("Failed to fetch tomorrow status");
-      }
-    };
-
-    const loadData = async () => {
-      await Promise.all([fetchTodayMeal(), fetchTomorrowStatus()]);
-      setLoading(false);
-    };
-
-    loadData();
+    fetchStudentData();
   }, []);
 
-  if (loading) return <p>Loading student dashboard...</p>;
+  // 🔄 LOADING STATE
+  if (loading) {
+    return <p>Loading student dashboard...</p>;
+  }
+
+  // ❌ ERROR STATE
+  if (error) {
+    return <p style={{ color: "red" }}>{error}</p>;
+  }
 
   return (
-  <div style={{ padding: "16px", maxWidth: "700px" }}>
-    <h2>Student Dashboard</h2>
+    <div style={{ padding: "16px", maxWidth: "700px" }}>
+      <h2>Student Dashboard</h2>
 
-    {/* Tomorrow Status */}
-    <div style={{ border: "1px solid #ccc", padding: "12px", marginBottom: "16px" }}>
-      <h3>Tomorrow’s Meal Status</h3>
+      {/* TOMORROW MEAL STATUS */}
+      <div
+        style={{
+          border: "1px solid #ccc",
+          padding: "16px",
+          marginTop: "16px",
+        }}
+      >
+        <h3>Tomorrow’s Meal Status</h3>
 
-      {(tomorrowStatus?.status === "NOT_APPLIED" ||
-        tomorrowStatus?.status === "CANCELLED") && (
-        <button onClick={handleApply}>Apply for Tomorrow</button>
-      )}
+        <p>
+          <strong>Status:</strong>{" "}
+          {tomorrowStatus?.status === "APPLIED"
+            ? "🟢 Applied"
+            : tomorrowStatus?.status === "CANCELLED"
+            ? "🔴 Cancelled"
+            : "⚪ Not Applied"}
+        </p>
+      </div>
 
-      {tomorrowStatus?.status === "APPLIED" && (
-        <button onClick={handleCancel}>Cancel Tomorrow’s Meal</button>
-      )}
+      {/* MONTHLY SUMMARY */}
+      <div
+        style={{
+          border: "1px solid #ccc",
+          padding: "16px",
+          marginTop: "16px",
+        }}
+      >
+        <h3>Monthly Meal Summary</h3>
 
-      {tomorrowStatus?.status === "CANCELLED" && (
-        <p>Status: 🔴 Cancelled</p>
-      )}
+        <p>
+          <strong>Total Meals:</strong>{" "}
+          {summary?.totalMeals ?? 0}
+        </p>
+      </div>
 
-      {tomorrowStatus?.status === "APPLIED" && (
-        <p>Status: 🟢 Applied</p>
-      )}
+      {/* NOTICES */}
+      <div
+        style={{
+          border: "1px solid #ccc",
+          padding: "16px",
+          marginTop: "16px",
+        }}
+      >
+        <h3>Notices</h3>
+
+        {notices.length === 0 ? (
+          <p>No active notices</p>
+        ) : (
+          <ul>
+            {notices.map((notice) => (
+              <li key={notice._id}>
+                <strong>{notice.title}</strong> —{" "}
+                {notice.description}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </div>
-
-    {/* Today Menu */}
-    <div style={{ border: "1px solid #ccc", padding: "12px" }}>
-      <h3>Today’s Meal</h3>
-
-      {meal ? (
-        <>
-          <p><strong>Breakfast:</strong> {meal.breakfast}</p>
-          <p><strong>Lunch:</strong> {meal.lunch}</p>
-          <p><strong>Dinner:</strong> {meal.dinner}</p>
-        </>
-      ) : (
-        <p>No meal data available</p>
-      )}
-    </div>
-  </div>
-);
+  );
 }
 
 export default StudentDashboard;

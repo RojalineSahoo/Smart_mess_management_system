@@ -22,25 +22,34 @@ export const AuthProvider = ({ children }) => {
     setLoading(false);
   }, []);
 
-  const login = async (credentials) => {
-    // 🔐 AUTO-LOGOUT previous user (IMPORTANT)
-    localStorage.clear();
-    setUser(null);
-    setToken(null);
+  const login = async ({ email, password }) => {
+  // 🔐 AUTO-LOGOUT previous user
+  localStorage.clear();
+  setUser(null);
+  setToken(null);
 
-    const res = await axios.post(
-      "http://localhost:5000/api/auth/login",
-      credentials
-    );
+  const res = await axios.post(
+    "http://localhost:5000/api/auth/login",
+    {
+      email,
+      password,
+    },
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
 
-    localStorage.setItem("token", res.data.token);
-    localStorage.setItem("user", JSON.stringify(res.data.user));
+  localStorage.setItem("token", res.data.token);
+  localStorage.setItem("user", JSON.stringify(res.data.user));
 
-    setUser(res.data.user);
-    setToken(res.data.token);
+  setUser(res.data.user);
+  setToken(res.data.token);
 
-    return res.data.user;
-  };
+  return res.data.user;
+};
+
 
   const logout = () => {
     localStorage.clear();

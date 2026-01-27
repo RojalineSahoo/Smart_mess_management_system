@@ -28,7 +28,7 @@ function AdminDashboard() {
 
   if (loading) return <p>Loading admin dashboard...</p>;
 
-  return (
+return (
   <div style={{ padding: "16px", maxWidth: "600px" }}>
     <h2>Admin Dashboard</h2>
 
@@ -43,10 +43,10 @@ function AdminDashboard() {
       <h3>Today’s Meal Count</h3>
 
       <p>
-        <strong>Total Meals:</strong> {todayCount?.count}
+        <strong>Total Meals:</strong> {todayCount?.count ?? 0}
       </p>
 
-      <small>Date: {todayCount?.date}</small>
+      <small>Date: {todayCount?.date ?? "N/A"}</small>
     </div>
 
     {/* TOMORROW COUNT */}
@@ -60,15 +60,15 @@ function AdminDashboard() {
       <h3>Tomorrow’s Meal Count</h3>
 
       <p>
-        <strong>Total Meals:</strong> {mealCount.count}
+        <strong>Total Meals:</strong> {mealCount?.count ?? 0}
       </p>
 
       <p>
         <strong>Status:</strong>{" "}
-        {mealCount.status === "TENTATIVE" ? "🟡 Tentative" : "🟢 Final"}
+        {mealCount?.status === "TENTATIVE" ? "🟡 Tentative" : "🟢 Final"}
       </p>
 
-      <small>Date: {mealCount.date}</small>
+      <small>Date: {mealCount?.date ?? "N/A"}</small>
     </div>
   </div>
 );
