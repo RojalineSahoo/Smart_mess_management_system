@@ -6,37 +6,37 @@ import User from "../models/User.js";
 dotenv.config({ path: "../.env" });
 
 const run = async () => {
-  try {
-    await mongoose.connect(process.env.MONGO_URI);
-    console.log("✅ MongoDB Atlas connected");
+  console.log("🔵 Connecting to DB:", process.env.MONGO_URI);
 
-    await User.deleteMany();
+  await mongoose.connect(process.env.MONGO_URI);
+  console.log("✅ MongoDB connected");
 
-    const passwordHash = await bcrypt.hash("password123", 10);
+  // 🔥 HARD RESET
+  await User.deleteMany({});
+  console.log("🧹 Old users deleted");
 
-    await User.create([
-      {
-        name: "Admin User",
-        email: "admin@test.com",
-        role: "admin",
-        passwordHash,
-        isActive: true,
-      },
-      {
-        name: "Test Student",
-        email: "student@test.com",
-        role: "student",
-        passwordHash,
-        isActive: true,
-      },
-    ]);
+  // 🔑 ONE PASSWORD FOR BOTH
+  const hash = await bcrypt.hash("password123", 10);
 
-    console.log("✅ Users seeded successfully");
-    process.exit(0);
-  } catch (err) {
-    console.error("❌ Seeding failed:", err.message);
-    process.exit(1);
-  }
+  await User.create([
+    {
+      name: "Admin User",
+      email: "admin@test.com",
+      passwordHash: hash,
+      role: "admin",
+      isActive: true,
+    },
+    {
+      name: "Test Student",
+      email: "student@test.com",
+      passwordHash: hash,
+      role: "student",
+      isActive: true,
+    },
+  ]);
+
+  console.log("✅ Users created with password123");
+  process.exit();
 };
 
 run();

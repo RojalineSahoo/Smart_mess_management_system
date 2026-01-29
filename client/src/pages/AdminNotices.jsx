@@ -2,15 +2,17 @@ import { useState } from "react";
 import api from "../services/api";
 
 function AdminNotices() {
-  console.log("Admin Notices");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState("NORMAL");
   const [effectiveFrom, setEffectiveFrom] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrorMessage("");
+    setSuccessMessage("");
 
     try {
       await api.post("/admin/notices", {
@@ -20,33 +22,34 @@ function AdminNotices() {
         effectiveFrom,
       });
 
-      // show success message
       setSuccessMessage("✅ Notice created successfully");
 
-      // reset form
+      // Reset form
       setTitle("");
       setDescription("");
       setPriority("NORMAL");
       setEffectiveFrom("");
     } catch (err) {
-      alert(err.response?.data?.message || "Failed to create notice");
+      console.error(err);
+      setErrorMessage(
+        err.response?.data?.message || "❌ Failed to create notice"
+      );
     }
   };
 
   return (
-  <div style={{ padding: "16px", maxWidth: "600px" }}>
+    <div style={{ padding: "20px", maxWidth: "600px" }}>
       <h2>Create Notice</h2>
 
-      {/* ✅ SUCCESS MESSAGE */}
       {successMessage && (
-        <p
-          style={{
-            color: "green",
-            fontWeight: "bold",
-            marginBottom: "12px"
-          }}
-        >
+        <p style={{ color: "green", fontWeight: "bold" }}>
           {successMessage}
+        </p>
+      )}
+
+      {errorMessage && (
+        <p style={{ color: "red", fontWeight: "bold" }}>
+          {errorMessage}
         </p>
       )}
 
@@ -55,7 +58,7 @@ function AdminNotices() {
         style={{
           border: "1px solid #ccc",
           padding: "16px",
-          borderRadius: "6px"
+          borderRadius: "6px",
         }}
       >
         {/* Title */}
@@ -67,6 +70,7 @@ function AdminNotices() {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
+            style={{ width: "100%" }}
           />
         </div>
 
@@ -80,6 +84,7 @@ function AdminNotices() {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             required
+            style={{ width: "100%", minHeight: "80px" }}
           />
         </div>
 

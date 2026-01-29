@@ -1,10 +1,10 @@
 import Notice from "../models/Notice.js";
 
-export const createNotice = async (req, res, next) => {
+export const createNotice = async (req, res) => {
+  console.log("Notices called");
   try {
     const user = req.user;
 
-    // Admin only
     if (user.role !== "admin") {
       return res.status(403).json({ message: "Access denied" });
     }
@@ -30,9 +30,13 @@ export const createNotice = async (req, res, next) => {
       notice
     });
   } catch (error) {
-    next(error);
+    console.error("Create notice error:", error.message);
+    return res.status(500).json({
+      message: error.message
+    });
   }
 };
+
 
 export const getActiveNotices = async (req, res, next) => {
   try {
@@ -44,7 +48,10 @@ export const getActiveNotices = async (req, res, next) => {
     }).sort({ priority: -1, createdAt: -1 });
 
     return res.status(200).json(notices);
-  } catch (error) {
-    next(error);
+      } catch (error) {
+      console.error("Create notice error:", error.message);
+      return res.status(500).json({
+        message: error.message
+      });
+    }
   }
-};

@@ -1,6 +1,5 @@
-/* eslint-disable react-hooks/set-state-in-effect */
 /* eslint-disable no-unused-vars */
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
@@ -8,60 +7,33 @@ function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-
-  const { login, logout } = useAuth(); // 👈 get logout also
   const navigate = useNavigate();
-
-  useEffect(() => {
-    setError(""); // clear error on page load
-  }, []);
+  const { login } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
     try {
-      // 🔐 AUTO-LOGOUT previous user
-      logout(); // clears token + auth state
+      const user = await login({ email, password });
 
-      const loggedInUser = await login({ email, password });
-
-      if (loggedInUser.role === "admin") {
-        navigate("/admin/dashboard");
-      } else {
-        navigate("/student/dashboard");
-      }
-    } catch {
+      navigate(
+        user.role === "admin"
+          ? "/admin/dashboard"
+          : "/student/dashboard"
+      );
+    } catch (err) {
       setError("Invalid email or password");
     }
   };
 
   return (
-    <div style={{ padding: "2rem" }}>
-      <h2>Login</h2>
-
+    <form onSubmit={handleSubmit}>
       {error && <p style={{ color: "red" }}>{error}</p>}
-
-      <form onSubmit={handleSubmit}>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-
-        <button type="submit">Login</button>
-      </form>
-    </div>
+      <input value={email} onChange={e => setEmail(e.target.value)} />
+      <input type="password" value={password} onChange={e => setPassword(e.target.value)} />
+      <button>Login</button>
+    </form>
   );
 }
 

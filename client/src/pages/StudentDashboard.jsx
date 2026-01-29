@@ -58,16 +58,56 @@ function StudentDashboard() {
       <h2>Student Dashboard</h2>
 
       <div style={{ border: "1px solid #ccc", padding: "16px", marginTop: "16px" }}>
-        <h3>Tomorrow’s Meal Status</h3>
-        <p>
-          <strong>Status:</strong>{" "}
-          {tomorrowStatus?.status === "APPLIED"
-            ? "🟢 Applied"
-            : tomorrowStatus?.status === "CANCELLED"
-            ? "🔴 Cancelled"
-            : "⚪ Not Applied"}
-        </p>
-      </div>
+  <h3>Tomorrow’s Meal Status</h3>
+
+  <p>
+    <strong>Status:</strong>{" "}
+    {tomorrowStatus?.status === "APPLIED"
+      ? "🟢 Applied"
+      : tomorrowStatus?.status === "CANCELLED"
+      ? "🔴 Cancelled"
+      : "⚪ Not Applied"}
+  </p>
+
+  {/* 🔒 LOCKED STATE */}
+  {tomorrowStatus?.locked && (
+    <p style={{ color: "red", marginTop: "8px" }}>
+      Meal application closed for tomorrow
+    </p>
+  )}
+
+  {/* ✅ APPLY BUTTON (NOT_APPLIED or CANCELLED, before cutoff) */}
+  {!tomorrowStatus?.locked &&
+    (tomorrowStatus?.status === "NOT_APPLIED" ||
+      tomorrowStatus?.status === "CANCELLED") && (
+      <button
+        style={{ marginTop: "8px" }}
+        onClick={async () => {
+          await api.post("/student/meals/apply");
+          const res = await api.get("/student/meals/tomorrow/status");
+          setTomorrowStatus(res.data);
+        }}
+      >
+        Apply for Tomorrow
+      </button>
+    )}
+
+  {/* ❌ CANCEL BUTTON (APPLIED, before cutoff) */}
+  {!tomorrowStatus?.locked &&
+    tomorrowStatus?.status === "APPLIED" && (
+      <button
+        style={{ marginTop: "8px" }}
+        onClick={async () => {
+          await api.post("/student/meals/cancel");
+          const res = await api.get("/student/meals/tomorrow/status");
+          setTomorrowStatus(res.data);
+        }}
+      >
+        Cancel Tomorrow’s Meal
+      </button>
+    )}
+</div>
+
 
       <div style={{ border: "1px solid #ccc", padding: "16px", marginTop: "16px" }}>
         <h3>Monthly Meal Summary</h3>

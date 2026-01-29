@@ -13,8 +13,8 @@ const noticeSchema = new mongoose.Schema(
     },
     priority: {
       type: String,
-      enum: ["LOW", "MEDIUM", "HIGH"],
-      default: "LOW"
+      enum: ["LOW", "NORMAL", "HIGH"],
+      default: "NORMAL"
     },
     effectiveFrom: {
       type: Date,
