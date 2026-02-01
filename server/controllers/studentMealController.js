@@ -96,3 +96,25 @@ export const getMonthlyMealSummary = async (req, res, next) => {
     });
   } catch (error) { next(error); }
 };
+
+// ... existing imports
+
+// ... existing imports
+
+// 6. GET TOMORROW'S MENU
+export const getTomorrowMenu = async (req, res, next) => {
+  try {
+    const targetDate = getTomorrowUtcMidnight();
+    const endOfTomorrow = new Date(targetDate);
+    endOfTomorrow.setDate(endOfTomorrow.getDate() + 1);
+
+    const menu = await Menu.findOne({
+      date: { $gte: targetDate, $lt: endOfTomorrow },
+    });
+
+    res.status(200).json({
+      success: true,
+      menu: menu || null,
+    });
+  } catch (error) { next(error); }
+};

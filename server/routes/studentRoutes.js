@@ -2,12 +2,14 @@ import express from "express";
 import { protect } from "../middleware/authMiddleware.js";
 import roleMiddleware from "../middleware/roleMiddleware.js";
 
+
 import {
   applyTomorrowMeal,
   cancelTomorrowMeal,
   getTomorrowMealStatus,
   getMonthlyMealSummary,
-  getTodayMenu // ✅ Added this import
+  getTodayMenu,
+  getTomorrowMenu // ✅ Added this import
 } from "../controllers/studentMealController.js";
 
 import { getActiveNotices } from "../controllers/noticeController.js";
@@ -25,7 +27,8 @@ router.get("/meals/tomorrow/status", getTomorrowMealStatus);
 router.get("/meals/summary", getMonthlyMealSummary);
 
 // Menu
-router.get("/menu/today", getTodayMenu); // ✅ Matches Frontend api.get("/student/menu/today")
+router.get("/menu/today", getTodayMenu); 
+router.get("/menu/tomorrow", getTomorrowMenu);
 
 // Notices
 router.get("/notices", getActiveNotices);

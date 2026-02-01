@@ -6,7 +6,8 @@ function StudentDashboard() {
   const [tomorrowStatus, setTomorrowStatus] = useState(null);
   const [summary, setSummary] = useState(null);
   const [notices, setNotices] = useState([]);
-  const [menu, setMenu] = useState(null); // ✅ Added Menu State
+  const [menu, setMenu] = useState(null); 
+  const [tomorrowMenu, setTomorrowMenu] = useState(null); // ✅ Added Tomorrow Menu State
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -16,18 +17,20 @@ function StudentDashboard() {
         const now = new Date();
         const month = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
 
-        // ✅ Fetching all 4 pieces of data at once
-        const [statusRes, summaryRes, noticeRes, menuRes] = await Promise.all([
+        // ✅ Fetching Today's Menu AND Tomorrow's Menu
+        const [statusRes, summaryRes, noticeRes, todayMenuRes, tomorrowMenuRes] = await Promise.all([
           api.get("/student/meals/tomorrow/status"),
           api.get(`/student/meals/summary?month=${month}`),
           api.get("/student/notices"),
-          api.get("/student/menu/today") 
+          api.get("/student/menu/today"),
+          api.get("/student/menu/tomorrow") // ✅ New API call
         ]);
 
         setTomorrowStatus(statusRes.data);
         setSummary(summaryRes.data);
         setNotices(noticeRes.data || []);
-        setMenu(menuRes.data.menu); // ✅ Saving menu data
+        setMenu(todayMenuRes.data.menu);
+        setTomorrowMenu(tomorrowMenuRes.data.menu); // ✅ Save Tomorrow's Menu
       } catch (err) {
         console.error("Failed to load student dashboard", err);
         setError("Failed to load student dashboard");
@@ -47,7 +50,6 @@ function StudentDashboard() {
   return (
     <div style={{ padding: "16px", maxWidth: "700px", fontFamily: "sans-serif", color: "#fff" }}>
       
-      {/* 🟢 DYNAMIC RECOGNITION HEADING */}
       <h2 style={{ textTransform: "capitalize", color: "white" }}>
         {summary?.studentName ? `${summary.studentName}'s Dashboard` : "Student Dashboard"}
       </h2>
@@ -66,9 +68,22 @@ function StudentDashboard() {
         )}
       </div>
 
-      {/* 📅 TOMORROW'S MEAL STATUS */}
+      {/* 📅 TOMORROW'S MEAL STATUS (Tomorrow Menu Added Inside Here) */}
       <div style={{ border: "1px solid #ccc", padding: "16px", marginTop: "16px", borderRadius: "8px" }}>
         <h3>Tomorrow’s Meal Status</h3>
+
+        {/* ✅ TOMORROW'S MENU PREVIEW */}
+        <div style={{ backgroundColor: "rgba(255,255,255,0.05)", padding: "10px", borderRadius: "4px", marginBottom: "12px" }}>
+          <p style={{ margin: "0 0 5px 0", color: "#3b82f6", fontWeight: "bold" }}>Tomorrow's Menu Preview:</p>
+          {tomorrowMenu ? (
+            <p style={{ margin: 0, fontSize: "0.9rem" }}>
+              🍳 {tomorrowMenu.breakfast} | 🍛 {tomorrowMenu.lunch} | 🥗 {tomorrowMenu.dinner}
+            </p>
+          ) : (
+            <p style={{ margin: 0, color: "#aaa", fontSize: "0.9rem" }}>Menu not updated for tomorrow yet.</p>
+          )}
+        </div>
+
         <p>
           <strong>Status:</strong>{" "}
           {tomorrowStatus?.status === "APPLIED"
