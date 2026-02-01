@@ -1,35 +1,47 @@
+import dns from 'node:dns';
+dns.setDefaultResultOrder('ipv4first');
 import dotenv from "dotenv";
-// 1. Load environment variables immediately
 dotenv.config(); 
 
 import express from "express";
 import cors from "cors";
+import cookieParser from "cookie-parser"; // 👈 Add this
 import connectDB from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
+import studentRoutes from "./routes/studentRoutes.js";
+import adminRoutes from "./routes/adminRoutes.js"; // Don't forget admin!
 
-// 2. Initialize the App
 const app = express();
 
-// 3. Connect to Database
-// Note: Ensure your config/db.js uses the timeout logic we discussed to prevent hanging
+// 1. Database Connection
 connectDB();
 
-// 4. Middleware
-app.use(cors());
+// 2. Middleware
+app.use(cors({
+  origin: "http://localhost:5173", // Your Vite URL
+  credentials: true,               // 👈 Critical for login sessions
+  methods: ["GET", "POST", "PUT", "DELETE"]
+}));
+
 app.use(express.json());
+app.use(cookieParser()); // 👈 Critical for reading the JWT token
 
-// 5. Routes
+// 3. Routes
 app.use("/api/auth", authRoutes);
+app.use("/api/student", studentRoutes); 
+app.use("/api/admin", adminRoutes); 
 
-// Root route for testing
 app.get("/", (req, res) => {
   res.send("Smart Mess Management System API is running...");
 });
 
-// 6. Start Server 
-// This part keeps the process from "Clean Exiting"
+// 4. Global Error Handler (Prevents server from crashing on errors)
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ success: false, message: err.message });
+});
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`🚀 Server is running on port ${PORT}`);
-  console.log(`✅ Press Ctrl+C to stop`);
 });

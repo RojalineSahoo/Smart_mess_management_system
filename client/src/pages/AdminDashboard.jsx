@@ -30,7 +30,7 @@ function AdminDashboard() {
 
 return (
   <div style={{ padding: "16px", maxWidth: "600px" }}>
-    <h2>Admin Dashboard</h2>
+    <h2 style={{ color: "#fff", textTransform: "capitalize"}} >ADMIN DASHBOARD</h2>
 
     {/* TODAY COUNT */}
     <div

@@ -6,60 +6,28 @@ import {
   applyTomorrowMeal,
   cancelTomorrowMeal,
   getTomorrowMealStatus,
-  getMonthlyMealSummary
+  getMonthlyMealSummary,
+  getTodayMenu // ✅ Added this import
 } from "../controllers/studentMealController.js";
 
-import { getMenuByDate } from "../controllers/menuController.js";
 import { getActiveNotices } from "../controllers/noticeController.js";
 
 const router = express.Router();
 
-// Apply for tomorrow's meal
-router.post(
-  "/meals/apply",
-  protect,
-  roleMiddleware("student"),
-  applyTomorrowMeal
-);
+// Apply middleware to all student routes
+router.use(protect);
+router.use(roleMiddleware("student"));
 
-// Cancel tomorrow's meal
-router.post(
-  "/meals/cancel",
-  protect,
-  roleMiddleware("student"),
-  cancelTomorrowMeal
-);
+// Meals
+router.post("/meals/apply", applyTomorrowMeal);
+router.post("/meals/cancel", cancelTomorrowMeal);
+router.get("/meals/tomorrow/status", getTomorrowMealStatus);
+router.get("/meals/summary", getMonthlyMealSummary);
 
-// Get tomorrow meal status
-router.get(
-  "/meals/tomorrow/status",
-  protect,
-  roleMiddleware("student"),
-  getTomorrowMealStatus
-);
+// Menu
+router.get("/menu/today", getTodayMenu); // ✅ Matches Frontend api.get("/student/menu/today")
 
-// View menu
-router.get(
-  "/menu",
-  protect,
-  roleMiddleware("student"),
-  getMenuByDate
-);
-
-// Get notices
-router.get(
-  "/notices",
-  protect,
-  roleMiddleware("student"),
-  getActiveNotices
-);
-
-// Get monthly summary
-router.get(
-  "/meals/summary",
-  protect,
-  roleMiddleware("student"),
-  getMonthlyMealSummary
-);
+// Notices
+router.get("/notices", getActiveNotices);
 
 export default router;

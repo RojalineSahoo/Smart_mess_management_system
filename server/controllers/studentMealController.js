@@ -1,223 +1,95 @@
 import MealEntry from "../models/MealEntry.js";
+import Menu from "../models/Menu.js";
+import { getUtcMidnight, getTomorrowUtcMidnight } from "../utils/dateUtils.js";
 
-// Student Meal Controller
-// Handles meal-related actions for students
-
-/*export const applyTomorrowMeal = async (req, res, next) => {
-  try {
-    // core apply logic will be added here
-    res.status(200).json({ message: "Apply tomorrow meal endpoint" });
-  } catch (error) {
-    next(error);
-  }
-};*/
-export const applyTomorrowMeal = async (req, res, next) => {
-  try {
-    const user = req.user;
-
-    // 1. Role check
-    if (user.role !== "student") {
-      return res.status(403).json({ message: "Access denied" });
-    }
-
-    // 2. Cutoff check (server time)
-    const now = new Date();
-    const cutoffHour = 22;
-    const cutoffMinute = 30;
-
-    if (
-      now.getHours() > cutoffHour ||
-      (now.getHours() === cutoffHour && now.getMinutes() >= cutoffMinute)
-    ) {
-      return res
-        .status(403)
-        .json({ message: "Meal application closed for tomorrow" });
-    }
-
-    // 3. Resolve tomorrow date (normalized)
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    tomorrow.setHours(0, 0, 0, 0);
-
-    // 4. Check existing entry
-    let entry = await MealEntry.findOne({
-      userId: user.id,
-      date: tomorrow
-    });
-
-    // 5. Locked check
-    if (entry && entry.locked) {
-      return res.status(403).json({ message: "Meal entry is locked" });
-    }
-
-    // 6. Create or update entry
-    if (!entry) {
-      entry = new MealEntry({
-        userId: user.id,
-        date: tomorrow,
-        status: "APPLIED",
-        locked: false
-      });
-    } else {
-      entry.status = "APPLIED";
-    }
-
-    await entry.save();
-
-    return res.status(200).json({
-      message: "Meal applied for tomorrow",
-      status: entry.status
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-
-
-/*export const cancelTomorrowMeal = async (req, res, next) => {
-  try {
-    // core cancel logic will be added here
-    res.status(200).json({ message: "Cancel tomorrow meal endpoint" });
-  } catch (error) {
-    next(error);
-  }
-};*/
-
-export const cancelTomorrowMeal = async (req, res, next) => {
-  try {
-    const user = req.user;
-
-    // 1. Role check
-    if (user.role !== "student") {
-      return res.status(403).json({ message: "Access denied" });
-    }
-
-    // 2. Cutoff check
-    const now = new Date();
-    const cutoffHour = 22;
-    const cutoffMinute = 30;
-
-    if (
-      now.getHours() > cutoffHour ||
-      (now.getHours() === cutoffHour && now.getMinutes() >= cutoffMinute)
-    ) {
-      return res
-        .status(403)
-        .json({ message: "Meal cancellation closed for tomorrow" });
-    }
-
-    // 3. Resolve tomorrow date
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    tomorrow.setHours(0, 0, 0, 0);
-
-    // 4. Find existing entry
-    const entry = await MealEntry.findOne({
-      userId: user.id,
-      date: tomorrow
-    });
-
-    if (!entry) {
-      return res
-        .status(404)
-        .json({ message: "No meal application found for tomorrow" });
-    }
-
-    // 5. Locked check
-    if (entry.locked) {
-      return res.status(403).json({ message: "Meal entry is locked" });
-    }
-
-    // 6. Cancel meal
-    entry.status = "CANCELLED";
-    await entry.save();
-
-    return res.status(200).json({
-      message: "Meal cancelled for tomorrow",
-      status: entry.status
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
+// 1. GET TOMORROW STATUS
 export const getTomorrowMealStatus = async (req, res, next) => {
   try {
-    const user = req.user;
-
-    // Role check
-    if (user.role !== "student") {
-      return res.status(403).json({ message: "Access denied" });
-    }
-
-    // Resolve tomorrow date
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    tomorrow.setHours(0, 0, 0, 0);
-
-    const entry = await MealEntry.findOne({
-      userId: user.id,
-      date: tomorrow
+    const targetDate = getTomorrowUtcMidnight();
+    const now = new Date();
+    const isLocked = now.getHours() > 22 || (now.getHours() === 22 && now.getMinutes() >= 30);
+    const entry = await MealEntry.findOne({ userId: req.user._id, date: targetDate });
+    res.status(200).json({
+      status: entry ? entry.status : "NOT_APPLIED",
+      locked: isLocked
     });
-
-    // No record
-    if (!entry) {
-      return res.status(200).json({
-        status: "NOT_APPLIED"
-      });
-    }
-
-    // Existing record
-    return res.status(200).json({
-      status: entry.status
-    });
-  } catch (error) {
-    next(error);
-  }
+  } catch (error) { next(error); }
 };
 
+// 2. APPLY FOR TOMORROW
+export const applyTomorrowMeal = async (req, res, next) => {
+  try {
+    const now = new Date();
+    if (now.getHours() > 22 || (now.getHours() === 22 && now.getMinutes() >= 30)) {
+      return res.status(403).json({ message: "Changes closed after 10:30 PM" });
+    }
+    const targetDate = getTomorrowUtcMidnight();
+    await MealEntry.findOneAndUpdate(
+      { userId: req.user._id, date: targetDate },
+      { status: "APPLIED" },
+      { upsert: true, new: true }
+    );
+    res.status(200).json({ success: true, message: "Applied successfully" });
+  } catch (error) { next(error); }
+};
+
+// 3. CANCEL FOR TOMORROW
+export const cancelTomorrowMeal = async (req, res, next) => {
+  try {
+    const now = new Date();
+    if (now.getHours() > 22 || (now.getHours() === 22 && now.getMinutes() >= 30)) {
+      return res.status(403).json({ message: "Changes closed after 10:30 PM" });
+    }
+    const targetDate = getTomorrowUtcMidnight();
+    await MealEntry.findOneAndUpdate(
+      { userId: req.user._id, date: targetDate },
+      { status: "CANCELLED" },
+      { upsert: true, new: true }
+    );
+    res.status(200).json({ success: true, message: "Cancelled successfully" });
+  } catch (error) { next(error); }
+};
+
+// 4. GET TODAY'S MENU (Used by Dashboard)
+export const getTodayMenu = async (req, res, next) => {
+  try {
+    const startOfToday = getUtcMidnight();
+    const endOfToday = new Date(startOfToday);
+    endOfToday.setDate(endOfToday.getDate() + 1);
+
+    const menu = await Menu.findOne({
+      date: { $gte: startOfToday, $lt: endOfToday },
+    });
+
+    res.status(200).json({
+      success: true,
+      menu: menu || null,
+    });
+  } catch (error) { next(error); }
+};
+
+// 5. GET MONTHLY SUMMARY
 export const getMonthlyMealSummary = async (req, res, next) => {
   try {
-    const user = req.user;
-
-    if (user.role !== "student") {
-      return res.status(403).json({ message: "Access denied" });
-    }
-
-    const { month } = req.query; // YYYY-MM
-
-    if (!month) {
-      return res.status(400).json({ message: "Month is required" });
-    }
-
-    const [year, monthIndex] = month.split("-").map(Number);
-
-    // ✅ Start of month (UTC normalized)
-    const startDate = new Date(Date.UTC(year, monthIndex - 1, 1, 0, 0, 0));
-
-    // ✅ Start of next month (exclusive)
-    const endDate = new Date(Date.UTC(year, monthIndex, 1, 0, 0, 0));
+    const { month } = req.query;
+    if (!month) return res.status(400).json({ message: "Month required" });
+    const [year, monthNum] = month.split("-").map(Number);
+    const startDate = new Date(Date.UTC(year, monthNum - 1, 1));
+    const endDate = new Date(Date.UTC(year, monthNum, 1));
 
     const meals = await MealEntry.find({
-      userId: user.id,
-      date: { $gte: startDate, $lt: endDate }
-    }).sort({ date: 1 });
-
-    const applied = meals.filter(m => m.status === "APPLIED").length;
-    const cancelled = meals.filter(m => m.status === "CANCELLED").length;
-
-    return res.status(200).json({
-      month,
-      totalDays: meals.length,
-      applied,
-      cancelled,
-      meals
+      userId: req.user._id,
+      date: { $gte: startDate, $lt: endDate },
+      status: "APPLIED"
     });
-  } catch (error) {
-    next(error);
-  }
+
+    res.status(200).json({
+      success: true,
+      studentName: req.user.name,
+      summary: {
+        totalMeals: meals.length,
+        estimatedBill: meals.length * 50
+      }
+    });
+  } catch (error) { next(error); }
 };
-
-
-
