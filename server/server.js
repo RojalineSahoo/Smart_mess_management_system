@@ -18,8 +18,11 @@ connectDB();
 
 // 2. Middleware
 app.use(cors({
-  origin: "http://localhost:5173", // Your Vite URL
-  credentials: true,               // 👈 Critical for login sessions
+  origin: [
+    "http://localhost:5173", 
+    "https://smart-mess-management-system-mb1g.vercel.app"
+  ],
+  credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE"]
 }));
 

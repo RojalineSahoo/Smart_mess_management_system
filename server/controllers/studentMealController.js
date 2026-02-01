@@ -7,7 +7,10 @@ export const getTomorrowMealStatus = async (req, res, next) => {
   try {
     const targetDate = getTomorrowUtcMidnight();
     const now = new Date();
-    const isLocked = now.getHours() > 22 || (now.getHours() === 22 && now.getMinutes() >= 30);
+    // Add 5.5 hours to UTC to get India Time
+    const nowIndia = new Date(new Date().getTime() + (5.5 * 60 * 60 * 1000));
+    const isLocked = nowIndia.getHours() > 22 || (nowIndia.getHours() === 22 && nowIndia.getMinutes() >= 30);
+    
     const entry = await MealEntry.findOne({ userId: req.user._id, date: targetDate });
     res.status(200).json({
       status: entry ? entry.status : "NOT_APPLIED",

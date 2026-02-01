@@ -1,7 +1,8 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:5000/api",
+  // Use the live Render link so your local code AND the hosted site both work
+  baseURL: "https://smart-mess-backend-0rvy.onrender.com/api",
 });
 
 api.interceptors.request.use(
