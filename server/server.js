@@ -5,11 +5,11 @@ dotenv.config();
 
 import express from "express";
 import cors from "cors";
-import cookieParser from "cookie-parser"; // 👈 Add this
+import cookieParser from "cookie-parser";
 import connectDB from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
 import studentRoutes from "./routes/studentRoutes.js";
-import adminRoutes from "./routes/adminRoutes.js"; // Don't forget admin!
+import adminRoutes from "./routes/adminRoutes.js"; 
 
 const app = express();
 
@@ -20,8 +20,8 @@ connectDB();
 app.use(cors({
   origin: [
     "http://localhost:5173", 
-    "https://smart-mess-management-system-lovat.vercel.app", // Add this exact one from your error
-    "https://smart-mess-management-system-mb1g.vercel.app"   // Keep your other one too
+    "https://smart-mess-management-system-lovat.vercel.app", 
+    "https://smart-mess-management-system-mb1g.vercel.app"   
   ],
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE"]
