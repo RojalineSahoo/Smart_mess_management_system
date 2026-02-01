@@ -20,7 +20,8 @@ connectDB();
 app.use(cors({
   origin: [
     "http://localhost:5173", 
-    "https://smart-mess-management-system-mb1g.vercel.app"
+    "https://smart-mess-management-system-lovat.vercel.app", // Add this exact one from your error
+    "https://smart-mess-management-system-mb1g.vercel.app"   // Keep your other one too
   ],
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE"]
