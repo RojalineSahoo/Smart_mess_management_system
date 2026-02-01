@@ -39,7 +39,7 @@ function AdminNotices() {
 
   return (
     <div style={{ padding: "20px", maxWidth: "600px" }}>
-      <h2>Create Notice</h2>
+      <h2 style = {{color: "white"}}>Create Notice</h2>
 
       {successMessage && (
         <p style={{ color: "green", fontWeight: "bold" }}>

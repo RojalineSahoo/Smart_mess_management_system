@@ -26,7 +26,7 @@ function Notices() {
 
   return (
     <div>
-      <h2>Notices</h2>
+      <h2 style = {{color: "white"}}>Notices</h2>
 
       {notices.length === 0 ? (
         <p>No notices available.</p>
